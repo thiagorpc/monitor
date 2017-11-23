@@ -64,10 +64,10 @@ chmod +x autogen.sh
 
 ./autogen.sh					
 
-* Utilize o parâmetro __march=native__ para compilar este projeto em um servidor com suporte a __AES-NI__
+*Utilize o parâmetro __march=native__ para compilar este projeto em um servidor com suporte a __AES-NI__*
 CFLAGS="*-march=native*" ./configure
 
-* Utilize o parâmetro __disable-aes-ni__ quando precisar indicar que o processador não suporta __AES-NI__
+*Utilize o parâmetro __disable-aes-ni__ quando precisar indicar que o processador __não__ suporta __AES-NI__*
 CFLAGS="*-march=native*" ./configure --disable-aes-ni
  
 make
