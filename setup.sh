@@ -163,16 +163,6 @@ cp /opt/monitor/access/access.c03 /etc/openvpn/client.key
 ok "Reiniciando o OpenVPN"
 sudo service openvpn stop && sudo service openvpn start
 #
-ok "Veja se aparece uma interface com o nome tun0, como no exemplo abaixo:"
-echo " "
-echo "tun0: flags=4305<UP,POINTOPOINT,RUNNING,NOARP,MULTICAST>  mtu 1500"
-echo " "
-ok "Vamos aguardar 10 segundos"
-sleep 10
-#
-ok "Verificando se o tunnel VPN está ativo - Internface tun0"
-ifconfig
-#
 #
 echo " "
 echo " "
@@ -186,11 +176,8 @@ echo " "
 #
 #
 ok "Removendo arquivos temporários"
-echo $mypwd"/setup.sh"
-rm $mypwd"/setup.sh"
-#
-sleep 2
-ok "Reiniciando o Linux."
-init 6
-#
+rm $mypwd"setup.sh"
 ok "FIM da configuração"
+ok "Reiniciando o Linux."
+sleep 2
+sudo init 6
