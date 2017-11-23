@@ -116,12 +116,12 @@ Sistema operacional
 ### Ubuntu Server 16.04.3 LTS
 [Ubuntu Server 16.04.3 LTS release notes](//wiki.ubuntu.com/XenialXerus/ReleaseNotes?_ga=2.208342994.1365505851.1511400309-1147109503.1509147611)
 
-[Link para download](//releases.ubuntu.com/16.04.3/ubuntu-16.04.3-server-amd64.iso?_ga=2.240878403.1365505851.1511400309-1147109503.1509147611)
+[Link para download](//www.ubuntu.com/download/alternative-downloads)
 
 ### Ubuntu Server 17.10
-[Ubuntu Server 17.10 release notes](//wiki.ubuntu.com/ArtfulAardvark/ReleaseNotes?_ga=2.249769926.1365505851.1511400309-1147109503.15091476110
+[Ubuntu Server 17.10 release notes](//wiki.ubuntu.com/ArtfulAardvark/ReleaseNotes?_ga=2.249769926.1365505851.1511400309-1147109503.15091476110)
 
-[Link para download](//releases.ubuntu.com/17.10/ubuntu-17.10-server-amd64.iso?_ga=2.14886134.1365505851.1511400309-1147109503.1509147611)
+[Link para download](//www.ubuntu.com/download/alternative-downloads)
 
 
 Doações
