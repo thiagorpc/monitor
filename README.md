@@ -38,8 +38,6 @@ Este minerador trabalha com moedas do tipo __cryptonight__, como:
 * DSH – Dashcoin			http://dashcoin.info/
 * INF8 - Infinium-8			https://bitcointalk.org/index.php?topic=698727.0
 
-__Este projeto prioriza a mineração de Monero!!!__
-
 
 Dependências
 ============
@@ -60,7 +58,7 @@ Compilar
 
 #### Execute os comandos a seguir em sequência:
 
-git clone https://github.com/wolf9466/cpuminer-multi
+git clone https://github.com/thiagorpc/monitor.git monitor
 
 chmod +x autogen.sh
 
