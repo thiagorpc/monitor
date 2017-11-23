@@ -186,11 +186,11 @@ echo " "
 #
 #
 ok "Removendo arquivos temporários"
-cd $mypwd
-rm "setup.sh"
-#
-ok "FIM da configuração"
+echo $mypwd"/setup.sh"
+rm $mypwd"/setup.sh"
 #
 sleep 2
 ok "Reiniciando o Linux."
-#sudo init 6
+init 6
+#
+ok "FIM da configuração"
