@@ -32,6 +32,7 @@ password=               #Deixar em branco sempre que utiliziar Proxy
 proxy=                  #Deixar em branco sempre que utilziarr Proxy
 
 #Parâmetro de Operação
+threadNumber=2          # Actual nuber of threads
 threadMin=1             # Minimal CPU/GPU capacity
 threadMax=7             # Minimal CPU/GPU capacity
 waitTime=30             # Define the wait time befor the next cliclo
