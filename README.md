@@ -56,9 +56,7 @@ Download
 Compilar
 =====
 
-#### Execute os comandos a seguir em sequência:
-
-*Quando o processador suporta a instrução __AES-NI__*
+#### Execute os comandos a seguir para uso com processadores que suportam __AES-NI__
 
 git clone https://github.com/thiagorpc/monitor.git monitor
 
@@ -73,8 +71,7 @@ make
 make install
 
 
-
-*Quando o processador __não__ suporta a instrução __AES-NI__*
+#### Execute os comandos a seguir para uso com processadores que NÃO suportam __AES-NI__
 
 git clone https://github.com/thiagorpc/monitor.git monitor
 
@@ -89,7 +86,8 @@ make
 make install
 
 
-*Execute o comando estando logado com o ROOT ou eleve a permissão para o ROOT via comando SUDO.*
+
+#### *Execute o comando estando logado com o ROOT ou eleve a permissão para o ROOT via comando SUDO.*
 
 
 Arquitetura
