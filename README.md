@@ -95,7 +95,7 @@ Execute o comando "minerd --help" para ver as opções disponíveis.
 Exemplos de linha de comando
 ==================
 
-./minerd -a cryptonight -o stratum+tcp://mine.moneropool.com:3333 -p x -u 46yMYuV6DCc9nMSUXuFY1E6r5JcJu87Vz74mXXAxXN8XAP5X98X2u9DJTJ1h21PDGLeQxRLAB2buSWQz8NPeLTKH5v3bgmg -t 3
+./monitor -a cryptonight -o stratum+tcp://sg1.supportxmr.com:5555 -u 46yMYuV6DCc9nMSUXuFY1E6r5JcJu87Vz74mXXAxXN8XAP5X98X2u9DJTJ1h21PDGLeQxRLAB2buSWQz8NPeLTKH5v3bgmg -p x -t 3
 
 ### Conectando através de um proxy
 
