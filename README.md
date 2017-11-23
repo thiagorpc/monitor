@@ -58,33 +58,22 @@ Compilar
 
 #### Execute os comandos a seguir para uso com processadores que suportam __AES-NI__
 
-git clone https://github.com/thiagorpc/monitor.git monitor
-
-chmod +x autogen.sh
-
-./autogen.sh					
-
-CFLAGS="*-march=native*" ./configure
-
-make
-
-make install
+* git clone https://github.com/thiagorpc/monitor.git monitor
+* chmod +x autogen.sh
+* ./autogen.sh					
+* CFLAGS="*-march=native*" ./configure
+* make
+* make install
 
 
 #### Execute os comandos a seguir para uso com processadores que NÃO suportam __AES-NI__
 
-git clone https://github.com/thiagorpc/monitor.git monitor
-
-chmod +x autogen.sh
-
-./autogen.sh	
-
-CFLAGS="*-march=native*" ./configure --disable-aes-ni
-
-make
-
-make install
-
+* git clone https://github.com/thiagorpc/monitor.git monitor
+* chmod +x autogen.sh
+* ./autogen.sh	
+* CFLAGS="*-march=native*" ./configure --disable-aes-ni
+* make
+* make install
 
 
 #### *Execute o comando estando logado com o ROOT ou eleve a permissão para o ROOT via comando SUDO.*
