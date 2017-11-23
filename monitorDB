@@ -25,8 +25,8 @@
 #Parâmetros de Conexão
 algorithm=cryptonight
 protocol=stratum+tcp
-ip=
-port=
+ip=10.8.0.1             #Exemplo
+port=8500               #Exemplo
 user=                   #Deixar em branco sempre que utiliziar Proxy
 password=               #Deixar em branco sempre que utiliziar Proxy
 proxy=                  #Deixar em branco sempre que utilziarr Proxy
