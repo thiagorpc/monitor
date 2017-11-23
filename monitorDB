@@ -1,0 +1,39 @@
+###############################################################################
+#                                                                             #
+#  Versão: 1.0                                                                #
+#                                                                             #
+#  Histório: Primeira versão                                                  #
+#                                                                             #
+#  Aqui está a sua base de dados, esse arquivo contém os dados que serão      #
+#  utilizado pelo Monitor e está dividido em duas partes, sendo:              #
+#                                                                             #
+#  - Conexão:                                                                 #
+#       Contém os dados necessários para conexão ao Proxy/Pool e cada um dos  #
+#       parâmetros deve ser configurado seguinto as regras de cada Proxy/Pool #
+#                                                                             #
+#       Caso tenha duvidas, contate o support pertinente                      #
+#                                                                             #
+#  -Operação:                                                                 #
+#       Visa maximizar seus rendimentos, pois, está comprovado que não        #
+#       compensa deixar uma CPU rodando a 100% o dia todo!!!                  #
+#                                                                             #
+#       Lembre-se de que menos faz muito mais e trabalho em equipe traz       #
+#       ótimos resultados.                                                    #
+#                                                                             #
+###############################################################################
+
+#Parâmetros de Conexão
+algorithm=cryptonight
+protocol=stratum+tcp
+ip=
+port=
+user=                   #Deixar em branco sempre que utiliziar Proxy
+password=               #Deixar em branco sempre que utiliziar Proxy
+proxy=                  #Deixar em branco sempre que utilziarr Proxy
+
+#Parâmetro de Operação
+threadNumber=1
+threadRange=1,7
+nextStop=
+nextStart=
+EOF
