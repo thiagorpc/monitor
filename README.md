@@ -5,7 +5,7 @@ Monitor é um minerador de Criptomoedas para CPUs (Processadores).
 
 Desenvolvido na linguagem de programação C, este minerador implementa recursos multi-threaded  e é compatível com o modelo JSON-RPC 2.0.
 
-*Méritos para [LucasJones](//https://github.com/lucasjones/cpuminer-multi) que é o autor do projeto original,  méritos a todos os outros desenvolvedores da comunidade.*
+*Méritos para [LucasJones](//github.com/lucasjones/cpuminer-multi) que é o autor do projeto original,  méritos a todos os outros desenvolvedores da comunidade.*
 
 *Veja __AUTHORS__ para obter a lista de contribuicões.*
 
@@ -18,6 +18,7 @@ Desenvolvido na linguagem de programação C, este minerador implementa recursos
 * [Compilar](#compilar)
 * [Arquitetura](#arquitetura)
 * [Instruções de uso](#Instruções-de-uso)
+* [Sistema operacional](#Sistema-operacional)
 * [Doações](#doações)
 * [Créditos](#créditos)
 * [Licença](#licença)
@@ -50,7 +51,7 @@ Dependências
 Download
 ========
 
-* Veja a arvore de desenvolvimento:   https://github.com/thiagorpc/cpu_miner.git
+* Veja a arvore de desenvolvimento:   https://github.com/thiagorpc/monitor.git
 * Faça um clone do projeto através do comando `git clone https://github.com/thiagorpc/cpu_miner.git`
 
 
@@ -107,7 +108,21 @@ Protocolos socks4a e socks5h, permitem resolução de nomes remotas e estão dis
 Se você não especificar um protocolo do tipo __SOCKS__, a aplicação irá assumir que você deseja utilizar um proxy do tipo __HTTP__.
 
 Quanto o parâmetro __--proxy__ não é utilizado, o programa deixa em branco as variáveis __http_proxy__ e tenta alcançar a Internet através da rede local.
- 
+
+
+Sistema operacional
+=========
+
+### Ubuntu Server 16.04.3 LTS
+[Ubuntu Server 16.04.3 LTS release notes](//wiki.ubuntu.com/XenialXerus/ReleaseNotes?_ga=2.208342994.1365505851.1511400309-1147109503.1509147611)
+
+[Link para download](//www.ubuntu.com/download/alternative-downloads)
+
+### Ubuntu Server 17.10
+[Ubuntu Server 17.10 release notes](//wiki.ubuntu.com/ArtfulAardvark/ReleaseNotes?_ga=2.249769926.1365505851.1511400309-1147109503.15091476110)
+
+[Link para download](//www.ubuntu.com/download/alternative-downloads)
+
 
 Doações
 =========
@@ -120,9 +135,10 @@ Sintam-se a vontade para fazerem suas doações com o objetivo de suportar futur
 Créditos
 =======
 
-*Méritos para [LucasJones](//https://github.com/lucasjones/cpuminer-multi) que é o autor do projeto original,  méritos a todos os outros desenvolvedores da comunidade.*
+*Méritos para [LucasJones](//github.com/lucasjones/cpuminer-multi) que é o autor do projeto original,  méritos a todos os outros desenvolvedores da comunidade.*
 
 *Veja __AUTHORS__ para obter a lista de contribuicões.*
+
 
 Licença
 =======
