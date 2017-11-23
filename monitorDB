@@ -32,8 +32,10 @@ password=               #Deixar em branco sempre que utiliziar Proxy
 proxy=                  #Deixar em branco sempre que utilziarr Proxy
 
 #Parâmetro de Operação
-threadNumber=1
-threadRange=1,7
-nextStop=
-nextStart=
+threadMin=1             # Minimal CPU/GPU capacity
+threadMax=7             # Minimal CPU/GPU capacity
+waitTime=30             # Define the wait time befor the next cliclo
+notRunFrom=07:30        # Limite execution time between From and To hour, per day.
+notRunTo=19:00          # Limite execution time between From and To hour, per day.
+notRunLow=True          # Set if the monitor needs to run with only one Thread durint NotRun period.
 
