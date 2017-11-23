@@ -127,4 +127,4 @@ Créditos
 Licença
 =======
 
-GPLv3.  Veja o arquivo COPYING para maiores detalhes.
+GPLv3.  Veja o arquivo LICENSE para maiores detalhes.
