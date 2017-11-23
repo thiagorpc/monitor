@@ -118,7 +118,7 @@ fi
 #
 ok "Movendo para o diretório /opt "
 cd /opt
-ok "Preparando para instalar o módulo CPUMiner-Multi"
+ok "Preparando para instalar o módulo Monitor"
 git clone https://github.com/thiagorpc/monitor.git monitor
 cd monitor/
 ok "Executando o script autogen.sh"
