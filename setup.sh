@@ -22,7 +22,7 @@ die() {
 #variaveis
 #
 access=$1
-mypwd=$(pwd)"/setup.sh"
+mypwd=$(pwd)
 #
 #limpa a tela
 clear
@@ -76,7 +76,7 @@ sudo FRONTEND=noninteractive apt-get -y install git screen build-essential autot
 sudo FRONTEND=noninteractive apt -y install libpcre16-3
 #
 ok "Removendo versões anteriores"
-rm -rf /opt/
+rm -rf /opt/*
 sudo update-rc.d minerd remove
 sudo update-rc.d monitor remove
 #
@@ -117,7 +117,7 @@ then
 fi
 #
 ok "Movendo para o diretório /opt "
-cd /opt/
+cd /opt
 ok "Preparando para instalar o módulo CPUMiner-Multi"
 git clone https://github.com/thiagorpc/monitor.git monitor
 cd monitor/
@@ -186,8 +186,8 @@ echo " "
 #
 #
 ok "Removendo arquivos temporários"
-echo $mypwd
-rm $mypwd
+cd $mypwd
+rm "setup.sh"
 #
 ok "FIM da configuração"
 #
