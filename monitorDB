@@ -36,14 +36,13 @@ threadNumber=2          # Actual nuber of threads
 threadMin=1             # Minimal CPU/GPU capacity
 threadMax=7             # Minimal CPU/GPU capacity
 
-waitTime=30             # Define the wait time befor next clycle and set startAgin
-startAgain=00:00        # Start monitor again
-workuntil=180           # Define how many time the monitor will work directly
-
 lowCPU=fase             # Enable/Disable lowCPU Feature.
 lowCPUFrom=00:00        # Limite execution time between From and To hour, per day.
 lowCPUTo=00:00          # Limite execution time between From and To hour, per day.
 
+waitTime=30             # Define the wait time befor next clycle and set startAgin
+startAgain=00:00        # Start monitor again
+workuntil=180           # Define how many time the monitor will work directly
                    
                    
 
