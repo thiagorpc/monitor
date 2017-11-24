@@ -42,6 +42,7 @@ lowCPUTo=00:00          # Limit the execution time between From and To hour, per
 
 waitTime=30             # Maximum value to wait before next Monitor cycle, used to set startAgin date-time
 startAgain=00:00        # Start monitor again
+stopAgain=00:00         # Stop monitor again
 workuntil=180           # Define how many time the monitor will work directly
                    
                    
