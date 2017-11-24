@@ -35,8 +35,8 @@ proxy=                  #Deixar em branco sempre que utilziarr Proxy
 threadNumber=2          # Actual nuber of threads
 threadMin=1             # Minimal CPU/GPU capacity
 threadMax=7             # Minimal CPU/GPU capacity
-waitTime=30             # Define the wait time befor the next cliclo
-notRunFrom=07:30        # Limite execution time between From and To hour, per day.
-notRunTo=19:00          # Limite execution time between From and To hour, per day.
-notRunLow=True          # Set if the monitor needs to run with only one Thread durint NotRun period.
+waitTime=30             # Define the wait time befor next clycle
 
+lowCPU=true             # Set if the monitor needs to run with only one Thread durint NotRun period.
+lowCPUFrom=07:30        # Limite execution time between From and To hour, per day.
+lowCPUTo=19:00          # Limite execution time between From and To hour, per day.
