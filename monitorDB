@@ -27,20 +27,20 @@ algorithm=cryptonight
 protocol=stratum+tcp
 ip=10.8.0.1             #Exemplo
 port=8500               #Exemplo
-user=                   #Deixar em branco sempre que utiliziar Proxy
-password=               #Deixar em branco sempre que utiliziar Proxy
-proxy=                  #Deixar em branco sempre que utilziarr Proxy
+user=                   #Deixar em branco sempre que utilizar Proxy
+password=               #Deixar em branco sempre que utilizar Proxy
+proxy=                  #Deixar em branco sempre que utilizar Proxy
 
 #Parâmetro de Operação
-threadNumber=2          # Actual nuber of threads
+threadNumber=2          # Actual number of threads
 threadMin=1             # Minimal CPU/GPU capacity
 threadMax=7             # Minimal CPU/GPU capacity
 
 lowCPU=fase             # Enable/Disable lowCPU Feature.
-lowCPUFrom=00:00        # Limite execution time between From and To hour, per day.
-lowCPUTo=00:00          # Limite execution time between From and To hour, per day.
+lowCPUFrom=00:00        # Limit the execution time between From and To hour, per day.
+lowCPUTo=00:00          # Limit the execution time between From and To hour, per day.
 
-waitTime=30             # Define the wait time befor next clycle and set startAgin
+waitTime=30             # Maximum value to wait before next Monitor cycle, used to set startAgin date-time
 startAgain=00:00        # Start monitor again
 workuntil=180           # Define how many time the monitor will work directly
                    
