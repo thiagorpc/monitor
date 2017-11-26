@@ -182,11 +182,18 @@ do_reload() {
         start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
         return 0
 }
+do_schedule() {
+        now=$(date -R)
+        echo "$now" >> kkkkkkkkkkk.log
+}
 case "$1" in
   check)
           do_error
           do_check
           ;;
+ schedule)
+          do_schedule
+          ;;        
   start)
           [ "$VERBOSE" != no ] && log_daemon_msg "Startingsss $DESC " "$NAME"
 
