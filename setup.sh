@@ -19,6 +19,10 @@ die() {
 	sleep 5;
 	exit 1;
 }
+#
+go_welcome() {
+        whiptail --title "Seja bem vindo ao Monitor" --msgbox "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
+}
 #variaveis
 #
 access=$1
@@ -27,9 +31,7 @@ mypwd=$(pwd)
 #limpa a tela
 clear
 #
-echo "Seja bem vindo!!"
-echo "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?"
-echo ""
+go_welcome
 #
 read -r -p "Podemos continuar? [S/N] " response
 case "$response" in
