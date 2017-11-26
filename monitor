@@ -26,7 +26,7 @@ log_message() {
         echo -e '\e[32m'`date -u` ":"  $1'\e[m';
 }
 #
-source /opt/monitor/monitorDB
+. /opt/monitor/monitorDB
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=monitor
 NAME=monitord
