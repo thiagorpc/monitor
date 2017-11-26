@@ -1,6 +1,26 @@
-#!/bin/bash
-#
-$DAEMON $DAEMON_OPTS
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          monitor
+# Required-Start:
+# Required-Stop:
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: monitor
+# Description:       monitor
+### END INIT INFO
+#[Unit]
+Description=Monitor
+Before=shutdown.target
+DefaultDependencies=no
+
+#[Service]
+ExecStart=/usr/local/bin/monitord
+Type=oneshot
+RemainAfterExit=yes
+WantedBy=multi-user.target
+
+#[Install]
+WantedBy=multi-user.target
 #
 log_message() {
         echo -e '\e[32m'`date -u` ":"  $1'\e[m';
@@ -12,6 +32,8 @@ DESC=monitor
 NAME=monitord
 DAEMON=/usr/local/bin/monitord
 DAEMON_OPTS=" "
+PIDFILE=/var/run/$NAME.pid
+SCRIPTNAME=/etc/init.d/$DESC
 #
 x_proxy=""
 if [ "$proxy" != "" ]
@@ -33,10 +55,6 @@ fi
 #
 DAEMON_OPTS=" -a $algorithm -o $protocol://$ip:$port -t $threadNumber $u_user $p_password $x_proxy "
 #
-PIDFILE=/var/run/$NAME.pid
-SCRIPTNAME=/etc/init.d/$DESC
-USER=monitor
-#
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
 
@@ -57,6 +75,14 @@ do_custom_message ()
         log_message " "
         log_message "Database :   /opt/monitor/monitorDB"
         log_message "Parâmetro:   $1"
+}
+do_enable ()
+{
+        /lib/sydostemd/systemd-sysv-install enable monitor
+}
+do_disable ()
+{
+        /lib/sydostemd/systemd-sysv-install disable monitor
 }
 do_error()
 {
@@ -183,6 +209,12 @@ case "$1" in
   status)
           status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
           ;;
+ enable)
+          do_enable
+          ;;
+ disable)
+          do_disable
+          ;;
  restart|force-reload)
         #
         # If the "reload" option is implemented then remove the
@@ -206,7 +238,7 @@ case "$1" in
         esac
         ;;
 *)
-        echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload}" >&2
+        echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|enable|disable}" >&2
         exit 3
         ;;
 esac
