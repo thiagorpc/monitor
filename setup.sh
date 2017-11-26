@@ -72,7 +72,7 @@ ok "Preparando para instalar os pacotes básicos para o Linux"
 sudo apt-get update
 sudo FRONTEND=noninteractive apt-get -y upgrade 
 sudo FRONTEND=noninteractive apt-get -y install
-sudo FRONTEND=noninteractive apt-get -y install git screen build-essential autotools-dev autoconf libcurl3 libcurl4-gnutls-dev
+sudo FRONTEND=noninteractive apt-get -y install git dialog screen build-essential autotools-dev autoconf libcurl3 libcurl4-gnutls-dev
 sudo FRONTEND=noninteractive apt -y install libpcre16-3
 #
 ok "Removendo versões anteriores"
