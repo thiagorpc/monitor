@@ -21,29 +21,28 @@
 #       ótimos resultados.                                                    #
 #                                                                             #
 ###############################################################################
-
+#
 #Parâmetros de Conexão
 algorithm=cryptonight
 protocol=stratum+tcp
-ip=10.8.0.1             #Exemplo
-port=8500               #Exemplo
-user=                   #Deixar em branco sempre que utilizar Proxy
-password=               #Deixar em branco sempre que utilizar Proxy
-proxy=                  #Deixar em branco sempre que utilizar Proxy
-
+ip=10.8.0.1
+port=8500
+WalletAddress=46yMYuV6DCc9nMSUXuFY1E6r5JcJu87Vz74mXXAxXN8XAP5X98X2u9DJTJ1h21PDGLeQxRLAB2buSWQz8NPeLTKH5v3bgmg
+WorkerName=pmnWorker
+E-mail=
+proxy=
+#
 #Parâmetro de Operação
-threadNumber=2          # Actual number of threads
-threadMin=1             # Minimal CPU/GPU capacity
-threadMax=7             # Minimal CPU/GPU capacity
-
-lowCPU=fase             # Enable/Disable lowCPU Feature.
-lowCPUFrom=00:00        # Limit the execution time between From and To hour, per day.
-lowCPUTo=00:00          # Limit the execution time between From and To hour, per day.
-
-waitTime=30             # Maximum value to wait before next Monitor cycle, used to set startAgin date-time
-startAgain=00:00        # Start monitor again
-stopAgain=00:00         # Stop monitor again
-workuntil=180           # Define how many time the monitor will work directly
+threadNumber=2
+threadMin=1
+threadMax=7
+lowCPU=fase
+lowCPUFrom=00:00
+lowCPUTo=00:00
+waitTime=30
+startAgain=00:00
+stopAgain=00:00
+workuntil=180
                    
                    
 
