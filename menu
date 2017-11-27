@@ -1,0 +1,168 @@
+#whiptail --title "Test Message Box" --msgbox "Create a message box with whiptail. Choose Ok to continue." 10 60
+
+load_DB() {
+        . /opt/monitor/monitorDB
+}
+
+load_DB
+
+iTitle="Monitor config interface"
+m0001="Utilize essa ferramenta para alterar as configurações da base de dados do Monitor"
+m0002="Deseja prosseguir?"
+m0003="Veja abaixo a configuração atual, para alterar, selecione o número a frente de cada parâmetro"
+m0004="Valor atual:"
+m0005="Defina o novo endereço IP ou URL para conexão com a Pool"
+m0006="Defina o novo número da porta de conexão com a Pool"
+m0007="Defina o novo protocolo de conexão com a Pool"
+m0008="Defina o novo algoritmo de conexão com a Pool"
+m0009="Defina o nome do usuário para conexão com a Pool"
+m0010="Defina o novo Password para autenticação na Pool"
+m0011="Defina o novo proxy para conexão com a Internet"
+
+save_DB(){
+        sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
+        > /opt/monitor/monitorDB.tmp
+
+        mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
+
+        load_DB
+}
+
+edit_algorithm()
+{
+        new_algorithm=$(whiptail --inputbox "$m0004 $algorithm" 8 78 $algorithm --title "$m0008" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "algorithm" "$algorithm" "$new_algorithm"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+edit_protocol(){
+        new_protocol=$(whiptail --inputbox "$m0004 $protocol" 8 78 $protocol --title "$m0007" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "protocol" "$protocol" "$new_protocol"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+edit_ipAddress(){
+        new_ip=$(whiptail --inputbox "$m0004 $ip" 8 78 $ip --title "$m0005" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "ip" "$ip" "$new_ip"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+edit_port () {
+        new_port=$(whiptail --inputbox "$m0004 $port" 8 78 $port --title "$m0006" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "port" "$port" "$new_port"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+edit_user() {
+        new_user=$(whiptail --inputbox "$m0004 $user" 8 78 $user --title "$m0009" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "user" "$user" "$new_user"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+edit_password() {
+        new_password=$(whiptail --inputbox "$m0004 $password" 8 78 $password --title "$m0010" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "password" "$password" "$new_password"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+edit_proxy() {
+        new_proxy=$(whiptail --inputbox "$m0004 $proxy" 8 78 $proxy --title "$m0011" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "proxy" "$proxy" "$new_proxy"
+                go_proxy
+        else
+            go_proxy
+        fi
+}
+
+go_proxy() {
+        menu_proxy=$(whiptail --title "$iTitle" --menu "Selecione o parâmetro que deseja alterar" 22 78 16 \
+                "Pool-Algoritmo" "     $algorithm" \
+                "Pool-Protocolo" "     $protocol" \
+                "Pool-Endereço-IP" "     $ip" \
+                "Pool-Porta" "     $port" \
+                "Pool-Usuário" "     $user" \
+                "Pool-Password" "     $password" \
+                "Internet-Proxy" "     $proxy" \
+                3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                case $menu_proxy in
+                        Pool-Algoritmo) edit_algorithm;;
+                        Pool-Protocolo) edit_protocol;;
+                        Pool-Endereço-IP) edit_ipAddress;;
+                        Pool-Porta) edit_port;;
+                        Pool-Usuário) edit_user;;
+                        Pool-Password) edit_password;;
+                        Internet-Proxy) edit_proxy;;
+                esac
+        else
+                go_main
+        fi
+}
+
+go_operation() {
+        echo "operation"
+}
+
+go_main() {
+        main=$(whiptail --title "$iTitle" --menu "Selecione a opção desejada" 15 60 4 \
+                "1" "Editar o módulo de conexão com Proxy XMR?"  \
+                "2" "Editar os parametros de operação?" \
+                3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                case $main in
+                        1)go_proxy;;
+                        2)go_operation;;
+                esac
+        else
+                echo "You chose Cancel."
+        fi
+}
+
+if (whiptail --title "$iTitle" --yesno "$m0001\n\n$m0002" 10 60)
+then
+        go_main
+else
+        clear
+fi
