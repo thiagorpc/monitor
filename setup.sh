@@ -8,18 +8,6 @@
 #
 ###########################################################################
 #
-# Functions
-ok() {
-	echo -e '\e[32m'`date -u` ":"  $1'\e[m';
-	sleep 2;
-}
-#
-die() {
-	echo -e '\e[32m'`date -u` ":"  $1'\e[m';
-	sleep 5;
-	exit 1;
-}
-#
 readarray -t newtcols < /etc/newt/palette
 myBackground=blue
 #
@@ -40,12 +28,25 @@ newtcols_error=(
         disabledentry=$myBackground,
 )
 #
+: ${PROG="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor"}
+# Functions
+ok() {
+	echo -e '\e[32m'`date -u` ":"  $1'\e[m';
+	sleep 2;
+}
+#
+die() {
+	echo -e '\e[32m'`date -u` ":"  $1'\e[m';
+	sleep 5;
+	exit 1;
+}
+#
 go_welcome() {
-        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" --msgbox "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
+        NEWT_COLORS=$PROG --yesno --yes-button "OK" --no-button "Sair" \
+		"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
 }
 #variaveis
 #
-access=$1
 mypwd=$(pwd)
 #
 #limpa a tela
@@ -53,31 +54,28 @@ clear
 #
 go_welcome
 #
-read -r -p "Podemos continuar? [S/N] " response
-case "$response" in
-	[nN]|[sS]) 
-		echo ""
-		echo "OK, vamos seguir em frente..."
-		echo ""
-		;;
-	*)
-		echo "Instalação cancelada com sucesso!!"
-		exit 0
-		;;
-esac
-#
-ok "Verificando se você está me modo ROOT."
-#
-sleep 3
-#
 # Sanity check
+#
+PCT=0
+(
+	while test $PCT != 100;
+	do
+		PCT=`expr $PCT + 20`;
+		echo $PCT;
+		sleep 1;
+done; ) | whiptail --title "Seja bem vindo ao Monitor" --gauge "Verificando se você está me modo ROOT." 20 70 0
+#
 if [[ $(id -g) != "0" ]]
 then
-	ok "Te avisei heinnn, cadê o modo ROOT?"
-	ok "Esse Script precisa ser executado como ROOT."
-	die "abortando a instalação!!"
+	NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+		whiptail --title "Seja bem vindo ao Monitor" \
+		"Te avisei heinnn, cadê o modo ROOT?\n \
+		Esse Script precisa ser executado como ROOT.\n \
+		Abortando a instalação!!" 10 60
 else
-	ok "Modo ROOT detectado, vamos proceguir com a instalação"
+	NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+		whiptail --title "Seja bem vindo ao Monitor" \
+		"Modo ROOT detectado, vamos seguir com a instalação." 10 60
 fi
 #
 ok "Obtendo o endereço IP do servidor"
@@ -88,6 +86,9 @@ then
 else
 	ok "Endereço IP/URL: $access"
 fi
+
+
+
 #
 #
 ok "Preparando para instalar os pacotes básicos para o Linux"
