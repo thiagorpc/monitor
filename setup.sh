@@ -40,22 +40,20 @@ die() {
 	exit 1;
 }
 #
-go_welcome() {
-        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
-		--yesno --yes-button "OK" --no-button "Sair" \
-		"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
-}
-#variaveis
-#
+clear
 mypwd=$(pwd)
 #
-#limpa a tela
-clear
-#
-go_welcome
+if (NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+	--yesno --yes-button "OK" --no-button "Sair" \
+	"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60)
+then
+       echo ""
+else
+        exit
+fi
+#variaveis
 #
 # Sanity check
-#
 PCT=0
 (
 	while test $PCT != 100;
@@ -63,7 +61,8 @@ PCT=0
 		PCT=`expr $PCT + 20`;
 		echo $PCT;
 		sleep 1;
-done; ) | whiptail --title "Seja bem vindo ao Monitor" --gauge "Verificando se você está me modo ROOT." 20 70 0
+done; ) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+	--gauge "Verificando se você está me modo ROOT." 20 70 0
 #
 if [[ $(id -g) != "0" ]]
 then
