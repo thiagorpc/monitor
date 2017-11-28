@@ -357,7 +357,7 @@ PCT=0
 PCT=0
 (
 	echo "*/1 * * * * /etc/init.d/monitor schedule" > customCron
-	crontab -e customCron
+	crontab -i customCron
 	rm customCron
 	
 	while test $PCT != 100;
