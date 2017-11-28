@@ -289,6 +289,8 @@ PCT=0
 		> /opt/monitor/monitorDB.tmp
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	#
+	chmod 775 /opt/monitor/menu
+	#
 	PCT=80
 	echo $PCT
 	sleep 1
