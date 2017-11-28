@@ -2,7 +2,7 @@
 #
 #
 load_DB() {
-	. /opt/monitor/monitorDB
+        . /opt/monitor/monitorDB
 }
 
 load_DB
@@ -29,32 +29,32 @@ newtcols_error=(
 
 
 iTitle="Monitor config interface"
-m0001="Utilize essa ferramenta para alterar as configuraÃ§Ãµes da base de dados do Monitor"
+m0001="Utilize essa ferramenta para alterar as configurações da base de dados do Monitor"
 m0002="Deseja prosseguir?"
-m0003="Veja abaixo a configuraÃ§Ã£o atual, para alterar, selecione o nÃºmero a frente de cada parÃ¢metro"
+m0003="Veja abaixo a configuração atual, para alterar, selecione o número a frente de cada parâmetro"
 m0004="Valor atual:"
-m0005="Defina o novo endereÃ§o IP ou URL para conexÃ£o com a Pool"
-m0006="Defina o novo nÃºmero da porta de conexÃ£o com a Pool"
-m0007="Defina o novo protocolo de conexÃ£o com a Pool"
-m0008="Defina o novo algoritmo de conexÃ£o com a Pool"
-m0009="Defina o endereÃ§o da sua Wallet"  
-m0010="Defina um nome para o parÃ¢metro WorkerName"
-m0011="Informe o seu endereÃ§o de E-mail"
-m0012="Defina um proxy para conexÃ£o com a Internet"
+m0005="Defina o novo endereço IP ou URL para conexão com a Pool"
+m0006="Defina o novo número da porta de conexão com a Pool"
+m0007="Defina o novo protocolo de conexão com a Pool"
+m0008="Defina o novo algoritmo de conexão com a Pool"
+m0009="Defina o endereço da sua Wallet"
+m0010="Defina um nome para o parâmetro WorkerName"
+m0011="Informe o seu endereço de E-mail"
+m0012="Defina um proxy para conexão com a Internet"
 
 save_DB(){
-	sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
-	> /opt/monitor/monitorDB.tmp
+        sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
+        > /opt/monitor/monitorDB.tmp
 
-	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
+        mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 
-	load_DB
+        load_DB
 }
 
 edit_algorithm()
 {
         new_algorithm=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $algorithm" 8 78 $algorithm \
-		--title "$m0008" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0008" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -67,7 +67,7 @@ edit_algorithm()
 
 edit_protocol(){
         new_protocol=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $protocol" 8 78 $protocol \
-		--title "$m0007" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0007" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -79,21 +79,21 @@ edit_protocol(){
 }
 
 edit_ipAddress(){
-	new_ip=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $ip" 8 78 $ip \
-		--title "$m0005" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
-	
-	exitstatus=$?
-	if [ $exitstatus = 0 ]; then
-		save_DB "ip" "$ip" "$new_ip"
-		go_proxy
-	else
-	    go_proxy
-	fi
+        new_ip=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $ip" 8 78 $ip \
+                --title "$m0005" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "ip" "$ip" "$new_ip"
+                go_proxy
+        else
+            go_proxy
+        fi
 }
 
 edit_port () {
         new_port=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $port" 8 78 $port \
-		--title "$m0006" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0006" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -106,7 +106,7 @@ edit_port () {
 
 edit_WalletAddress() {
         new_WalletAddress=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $WalletAddress" 8 78 $WalletAddress \
-		--title "$m0009" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0009" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -132,7 +132,7 @@ edit_WorkerName() {
 
 edit_Email() {
         new_Email=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $Email" 8 78 $Email \
-		--title "$m0011" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0011" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -145,7 +145,7 @@ edit_Email() {
 
 edit_proxy() {
         new_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $proxy" 8 78 $proxy \
-		--title "$m0012" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+                --title "$m0012" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
@@ -157,62 +157,63 @@ edit_proxy() {
 }
 
 go_proxy() {
-	menu_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-		--title "$iTitle" --cancel-button "Cancelar" --menu "Selecione o parÃ¢metro que deseja alterar" 22 68 16 \
-		"Pool-Algoritmo" "     $algorithm" \
-		"Pool-Protocolo" "     $protocol" \
-		"Pool-EndereÃ§o-IP" "     $ip" \
-		"Pool-Porta" "     $port" \
-		"Pool-Wallet-Address" "     "$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )"..." \
-		"Pool-Worker-Name" "     $WorkerName" \
-		"Pool-Email" "     $Email" \
-		"Internet-Proxy" "     $proxy" \
-		3>&1 1>&2 2>&3)
-	
-	exitstatus=$?
-	if [ $exitstatus = 0 ]; then
-		case $menu_proxy in
-		        Pool-Algoritmo) edit_algorithm;;
-			Pool-Protocolo) edit_protocol;;
-			Pool-EndereÃ§o-IP) edit_ipAddress;;
-			Pool-Porta) edit_port;;
-			Pool-Wallet-Address) edit_WalletAddress;;
-			Pool-Worker-Name) edit_WorkerName;;
-			Pool-Email) edit_Email;;
+        menu_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
+                --title "$iTitle" --cancel-button "Cancelar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
+                "Pool-Algoritmo" "     $algorithm" \
+                "Pool-Protocolo" "     $protocol" \
+                "Pool-Endereço-IP" "     $ip" \
+                "Pool-Porta" "     $port" \
+                "Pool-Wallet-Address" "     "$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )"..." \
+                "Pool-Worker-Name" "     $WorkerName" \
+                "Pool-Email" "     $Email" \
+                "Internet-Proxy" "     $proxy" \
+                3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                case $menu_proxy in
+                        Pool-Algoritmo) edit_algorithm;;
+                        Pool-Protocolo) edit_protocol;;
+                        Pool-Endereço-IP) edit_ipAddress;;
+                        Pool-Porta) edit_port;;
+                        Pool-Wallet-Address) edit_WalletAddress;;
+                        Pool-Worker-Name) edit_WorkerName;;
+                        Pool-Email) edit_Email;;
                         Internet-Proxy) edit_proxy;;
-		esac
-	else
-		go_main
-	fi
+                esac
+        else
+                go_main
+        fi
 }
 
 go_operation() {
-	clear
+        echo "operation"
 }
 
 go_main() {
-	main=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-		--title "$iTitle" --cancel-button "Cancelar" --menu "Selecione a opÃ§Ã£o desejada" 15 60 4 \
-		"1" "Editar o mÃ³dulo de conexÃ£o com Proxy XMR?"  \
-		"2" "Editar os parametros de operaÃ§Ã£o?" \
-		3>&1 1>&2 2>&3)
+        main=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
+                --title "$iTitle" --cancel-button "Cancelar" --menu "Selecione a opção desejada" 15 60 4 \
+                "1" "Editar o módulo de conexão com Proxy XMR?"  \
+                "2" "Editar os parametros de operação?" \
+                3>&1 1>&2 2>&3)
 
-	exitstatus=$?
-	if [ $exitstatus = 0 ]; then
-		case $main in
-			1)go_proxy;;
-			2)go_operation;;
-		esac
-	else
-		echo "You chose Cancel."
-	fi
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                case $main in
+                        1)go_proxy;;
+                        2)go_operation;;
+                esac
+        else
+                echo "You chose Cancel."
+        fi
 }
 
 if (NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-	--title "$iTitle" --yesno --yes-button "Sim" --no-button "NÃ£o" \
-	"$m0001\n\n$m0002" 10 60)
+        --title "$iTitle" --yesno --yes-button "Sim" --no-button "Não" \
+        "$m0001\n\n$m0002" 10 60)
 then
-	go_main
+        go_main
 else
-	clear
+        clear
 fi
+
