@@ -41,7 +41,7 @@ die() {
 }
 #
 go_welcome() {
-        NEWT_COLORS=${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
 		--yesno --yes-button "OK" --no-button "Sair" \
 		"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
 }
