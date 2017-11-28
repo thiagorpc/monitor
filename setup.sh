@@ -290,6 +290,7 @@ PCT=0
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	#
 	chmod 775 /opt/monitor/menu
+	chmod 775 /opt/monitor/schedule
 	#
 	PCT=80
 	echo $PCT
