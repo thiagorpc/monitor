@@ -15,14 +15,14 @@ vpnServer=$1
 proxyPort=$2
 upgrade=$3
 
-if [ "$proxyPort" = ""]
+if [ "$proxyPort" = "" ]
 then
-	proxyPort=8500
+	proxyPort="8500"
 fi
 #
-if [ "$upgrade" = ""]
+if [ "$upgrade" = "" ]
 then
-	upgrade=no
+	upgrade="no"
 fi
 #
 mypwd=$(pwd)
