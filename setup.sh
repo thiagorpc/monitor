@@ -28,7 +28,6 @@ newtcols_error=(
         disabledentry=$myBackground,
 )
 #
-: ${PROG="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor"}
 # Functions
 ok() {
 	echo -e '\e[32m'`date -u` ":"  $1'\e[m';
@@ -42,7 +41,8 @@ die() {
 }
 #
 go_welcome() {
-        NEWT_COLORS=$PROG --yesno --yes-button "OK" --no-button "Sair" \
+        NEWT_COLORS=${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+		--yesno --yes-button "OK" --no-button "Sair" \
 		"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
 }
 #variaveis
