@@ -22,10 +22,6 @@ WantedBy=multi-user.target
 #[Install]
 WantedBy=multi-user.target
 #
-log_message() {
-        echo -e '\e[32m'`date -u` ":"  $1'\e[m';
-}
-#
 . /opt/monitor/monitorDB
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=monitor
@@ -70,11 +66,11 @@ DAEMON_OPTS=" -a $algorithm -o $protocol://$ip:$port -t $threadNumber $u_user $p
 #
 do_custom_message ()
 {
-        log_message "Não foi possivel iniciar mineração!!!"
-        log_message "Verifique a configuração da base de dados"
-        log_message " "
-        log_message "Database :   /opt/monitor/monitorDB"
-        log_message "Parâmetro:   $1"
+        echo "Não foi possivel iniciar mineração!!!"
+        echo "Verifique a configuração da base de dados"
+        echo " "
+        echo "Database :   /opt/monitor/monitorDB"
+        echo "Parâmetro:   $1"
 }
 do_enable ()
 {
@@ -113,16 +109,23 @@ do_error()
         fi
 
 }
+do_config()
+{
+	/opt/monitor/menu
+}
+do_schedule() {
+    /opt/monitor/schedule
+}
 do_check()
 {
         #used to validade de monitor line
         clear
 
-        log_message "Vamos validar a configuração da linha de comando e passagem de parâmetros"
+        echo "Vamos validar a configuração da linha de comando e passagem de parâmetros"
         sleep 3
 
-        log_message "Veja como ficará a linha de comando:"
-        log_message "$DAEMON $DAEMON_OPTS"
+        echo "Veja como ficará a linha de comando:"
+        echo "$DAEMON $DAEMON_OPTS"
 
         sleep 5
         echo " "
@@ -182,19 +185,18 @@ do_reload() {
         start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
         return 0
 }
-do_schedule() {
-        now=$(date -R)
-        echo "$now" >> kkkkkkkkkkk.log
-}
 case "$1" in
-  check)
+	config)
+          do_config
+          ;;
+	check)
           do_error
           do_check
           ;;
- schedule)
+	schedule)
           do_schedule
           ;;        
-  start)
+	start)
           [ "$VERBOSE" != no ] && log_daemon_msg "Startingsss $DESC " "$NAME"
 
           do_error
@@ -205,7 +207,7 @@ case "$1" in
                   2) [ "$VERBOSE" != no ] && log_end_msg 1 && echo "Retornou 2 ";;
           esac
           ;;
-  stop)
+	stop)
           [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
           do_stop
           case "$?" in
@@ -213,16 +215,16 @@ case "$1" in
                   2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
           esac
           ;;
-  status)
+  	status)
           status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
           ;;
- enable)
+	enable)
           do_enable
           ;;
- disable)
+	disable)
           do_disable
           ;;
- restart|force-reload)
+	restart|force-reload)
         #
         # If the "reload" option is implemented then remove the
         # 'force-reload' alias
