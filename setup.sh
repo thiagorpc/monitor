@@ -44,46 +44,66 @@ clear
 mypwd=$(pwd)
 #
 if (NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
-	--yesno --yes-button "OK" --no-button "Sair" \
-	"Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60)
+        --yesno --yes-button "OK" --no-button "Sair" \
+        "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60)
 then
-       echo ""
+        PCT=0
+        (
+                while test $PCT != 100;
+                do
+                        PCT=`expr $PCT + 20`;
+                        echo $PCT;
+                        sleep 1;
+                done; ) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+                        --gauge "Verificando se você está me modo ROOT." 20 70 0
 else
         exit
 fi
 #variaveis
 #
-# Sanity check
-PCT=0
-(
-	while test $PCT != 100;
-	do
-		PCT=`expr $PCT + 20`;
-		echo $PCT;
-		sleep 1;
-done; ) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
-	--gauge "Verificando se você está me modo ROOT." 20 70 0
-#
 if [[ $(id -g) != "0" ]]
 then
-	NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
-		whiptail --title "Seja bem vindo ao Monitor" \
-		"Te avisei heinnn, cadê o modo ROOT?\n \
-		Esse Script precisa ser executado como ROOT.\n \
-		Abortando a instalação!!" 10 60
+        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+                whiptail --title "Seja bem vindo ao Monitor" \
+                --msgbox "Te avisei heinnn, cadê o modo ROOT?\nEsse Script precisa ser executado como ROOT.\nAbortando a instalação!! " 10 60
+
+        exit
 else
-	NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
-		whiptail --title "Seja bem vindo ao Monitor" \
-		"Modo ROOT detectado, vamos seguir com a instalação." 10 60
+        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+                whiptail --title "Seja bem vindo ao Monitor" \
+                --msgbox "Modo ROOT detectado, vamos seguir com a instalação." 10 60
 fi
 #
-ok "Obtendo o endereço IP do servidor"
+
+access=""
+
+go_access() {
+	new_IP=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $ip" 8 78 $ip \
+           --title "Seja bem vindo ao Monitor" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+	exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                access="$new_IP"
+        else
+            go_proxy
+        fi
+}
+
 if [ "$access" = "" ]
 then
-	ok "Esqueceu de informar o endereço IP ou URL de conexão"
-	die "Abortando a instalação"
+	go_access()
 else
-	ok "Endereço IP/URL: $access"
+	
+	new_IP=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --msgbox "O endereço IP para conexão será: $access" 8 78 \
+                --title "Seja bem vindo ao Monitor" --cancel-button "Voltar" --ok-button "OK" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                echo ""
+        else
+            go_access()
+        fi
+	
 fi
 
 
