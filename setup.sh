@@ -20,8 +20,28 @@ die() {
 	exit 1;
 }
 #
+readarray -t newtcols < /etc/newt/palette
+myBackground=blue
+#
+newtcols_error=(
+        window=,lightgray
+        border=black,lightgray
+        textbox=black,lightgray
+        button=white,red
+
+        root=,$myBackground
+        checkbox=,$myBackground
+        entry=,$myBackground
+        label=$myBackground,
+        actlistbox=,$myBackground
+        helpline=,$myBackground
+        roottext=green,$myBackground
+        emptyscale=$myBackground
+        disabledentry=$myBackground,
+)
+#
 go_welcome() {
-        whiptail --title "Seja bem vindo ao Monitor" --msgbox "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
+        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" --msgbox "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60
 }
 #variaveis
 #
