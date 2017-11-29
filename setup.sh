@@ -293,6 +293,7 @@ PCT=0
 	#
 	chmod 775 /opt/monitor/menu
 	chmod 775 /opt/monitor/schedule
+	chmod 775 /opt/monitor/upgrade
 	#
 	PCT=80
 	echo $PCT
@@ -374,7 +375,10 @@ PCT=0
 	
 	sudo timedatectl set-timezone America/Sao_Paulo
 	sudo timedatectl set-ntp on
-	
+	sudo update-rc.d ntp defaults
+	sudo update-rc.d ntp enable
+	service ntp start
+		
 	init 6
 
 	) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
