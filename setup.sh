@@ -148,7 +148,8 @@ PCT=0
 #
 PCT=0
 (
-	crontab -r
+	crontab -r > /dev/null 2>&1
+	/etc/init.d/monitor stop
 	#Removendo versões anteriores
 	
 	PCT=10
@@ -162,11 +163,10 @@ PCT=0
 			mv /opt/monitor/monitorDB /tmp/monitorDB.bak
 		fi
 	fi
-
+	
 	PCT=20
 	echo $PCT
 	sleep 1
-	/etc/init.d/monitor stop
 	sudo update-rc.d minerd remove
 	sudo update-rc.d monitor remove
 	#
@@ -303,7 +303,7 @@ PCT=0
 		> /opt/monitor/monitorDB.tmp
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	#
-	sed -e "s%vpnaddress=0.0.0.0%vpnaddress=$vpnaddress%g" /opt/monitor/monitorDB \
+	sed -e "s%vpnaddress=0.0.0.0%vpnaddress=$access%g" /opt/monitor/monitorDB \
 		> /opt/monitor/monitorDB.tmp
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	#
@@ -369,7 +369,7 @@ PCT=0
 	PCT=100
 	echo $PCT
 	sleep 1
-	rm $mypwd"/setup.sh"
+	#rm $mypwd"/setup.sh"
 
 	) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
 		--gauge "\nConfigurando o suporte VPN." 10 70 0
@@ -397,6 +397,7 @@ PCT=0
 	sudo update-rc.d ntp enable
 	service ntp start
 		
+	#
 	init 6
 
 	) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
