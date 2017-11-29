@@ -148,7 +148,9 @@ PCT=0
 #
 PCT=0
 (
+	crontab -r
 	#Removendo versões anteriores
+	
 	PCT=10
 	echo $PCT
 	sleep 1
@@ -165,10 +167,8 @@ PCT=0
 	echo $PCT
 	sleep 1
 	/etc/init.d/monitor stop
-	rm -rf /opt/monitor
 	sudo update-rc.d minerd remove
 	sudo update-rc.d monitor remove
-	crontab -r
 	#
 	PCT=30
 	echo $PCT
@@ -235,6 +235,8 @@ PCT=0
 	then
 		rm /etc/init.d/monitor
 	fi
+	
+	rm -rf /opt/monitor
 	
 	PCT=100
 	echo $PCT
