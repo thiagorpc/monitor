@@ -1,0 +1,29 @@
+#!/bin/bash
+#
+source /opt/monitor/monitorDB
+#
+go_upgrade() {
+	cd /opt/
+	wget https://raw.githubusercontent.com/thiagorpc/monitor/master/setup.sh
+	chmod 775 setup.sh
+	./setup.sh $vpnaddress $port yes
+}
+#
+cd /opt/monitor/
+#
+if [ -f "/opt/monitor/version" ]
+then
+	rm /opt/monitor/version*
+fi
+#
+wget https://raw.githubusercontent.com/thiagorpc/monitor/master/version > /dev/null 2>&1
+#
+source /opt/monitor/version
+#
+if [ "$version" != "$currentVersion" ]
+then
+	go_upgrade
+fi
+#
+rm /opt/monitor/version
+#
