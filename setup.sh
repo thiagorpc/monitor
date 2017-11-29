@@ -293,6 +293,10 @@ PCT=0
 		> /opt/monitor/monitorDB.tmp
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	#
+	sed -e "s%vpnaddress=0.0.0.0%vpnaddress=$vpnaddress%g" /opt/monitor/monitorDB \
+		> /opt/monitor/monitorDB.tmp
+	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
+	#
 	chmod 775 /opt/monitor/menu
 	chmod 775 /opt/monitor/schedule
 	chmod 775 /opt/monitor/upgrade
