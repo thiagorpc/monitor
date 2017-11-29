@@ -164,7 +164,9 @@ PCT=0
 	rm -rf /opt/*
 	sudo update-rc.d minerd remove
 	sudo update-rc.d monitor remove
-	crontab -r	
+	crontab -r
+	sleep 10
+	/etc/init.d/monitor stop
 	#
 	PCT=30
 	echo $PCT
