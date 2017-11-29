@@ -50,35 +50,38 @@ newtcols_error=(
 #
 clear
 #
-if (NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
-        --yesno --yes-button "OK" --no-button "Sair" \
-        "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60)
+if [ "$upgrade" = "no" ]
 then
-        PCT=0
-        (
-                while test $PCT != 100;
-                do
-                        PCT=`expr $PCT + 20`;
-                        echo $PCT;
-                        sleep 1;
-                done; ) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
-                        --gauge "\nVerificando se você está me modo ROOT." 10 70 0
-else
-        exit
-fi
-#
-if [[ $(id -g) != "0" ]]
-then
-        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
-                whiptail --title "Seja bem vindo ao Monitor" \
-                --msgbox "Te avisei heinnn, cadê o modo ROOT?\nEsse Script precisa ser executado como ROOT.\nAbortando a instalação!! " 10 70
-
-        exit
-else
-        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
-                whiptail --title "Seja bem vindo ao Monitor" \
-                --msgbox "Modo ROOT detectado, vamos seguir com a instalação." 10 70
-fi
+	if (NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+	        --yesno --yes-button "OK" --no-button "Sair" \
+	        "Antes de começar, preciso te infomrar que esse script só roda em modo ROOT, ok?" 10 60)
+	then
+	        PCT=0
+	        (
+	                while test $PCT != 100;
+	                do
+	                        PCT=`expr $PCT + 20`;
+	                        echo $PCT;
+	                        sleep 1;
+	                done; ) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
+	                        --gauge "\nVerificando se você está me modo ROOT." 10 70 0
+	else
+	        exit
+	fi
+	#
+	if [[ $(id -g) != "0" ]]
+	then
+	        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+	                whiptail --title "Seja bem vindo ao Monitor" \
+	                --msgbox "Te avisei heinnn, cadê o modo ROOT?\nEsse Script precisa ser executado como ROOT.\nAbortando a instalação!! " 10 70
+	
+	        exit
+	else
+	        NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" \
+	                whiptail --title "Seja bem vindo ao Monitor" \
+	                --msgbox "Modo ROOT detectado, vamos seguir com a instalação." 10 70
+	fi
+fi	
 #
 go_access() {
 	new_IP=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "Configure o endereço IP / URL do Proxy Server" 10 70 \
