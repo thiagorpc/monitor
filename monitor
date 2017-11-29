@@ -1,35 +1,28 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          monitor
-# Required-Start:
+# Provides:          monitor-cpuminer
+# Required-Start:    $network $local_fs
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: monitor
-# Description:       monitor
+# Short-Description: Monitor CPUminer
+# Description:       This application uses idle cpu time (for as much
+#                    as possible) to mine for bitcoins.
 ### END INIT INFO
-#[Unit]
-Description=Monitor
-Before=shutdown.target
-DefaultDependencies=no
-
-#[Service]
-ExecStart=/usr/local/bin/monitord
-Type=oneshot
-RemainAfterExit=yes
-WantedBy=multi-user.target
-
-#[Install]
-WantedBy=multi-user.target
+# $ sudo chmod +x /etc/init.d/ddd
+# $ sudo update-rc.d dddd defaults
+# $ sudo service monitord start
 #
-. /opt/monitor/monitorDB
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=monitor
 NAME=monitord
 DAEMON=/usr/local/bin/monitord
-DAEMON_OPTS=" "
+DAEMON_OPTS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$DESC
+USER=root
+#
+. /opt/monitor/monitorDB
 #
 x_proxy=""
 if [ "$proxy" != "" ]
@@ -63,7 +56,6 @@ DAEMON_OPTS=" -a $algorithm -o $protocol://$ip:$port -t $threadNumber $u_user $p
 
 #
 # Function that starts the daemon/service
-#
 do_custom_message ()
 {
         echo "Não foi possivel iniciar mineração!!!"
@@ -72,6 +64,7 @@ do_custom_message ()
         echo "Database :   /opt/monitor/monitorDB"
         echo "Parâmetro:   $1"
 }
+
 do_error()
 {
         clear
@@ -99,89 +92,100 @@ do_error()
                 do_custom_message "Port"
                 exit
         fi
-
 }
+
 do_enable() {
 	/lib/systemd/systemd-sysv-install enable monitor
 }
+
 do_disable() {
-        /lib/systemd/systemd-sysv-install disable monitor
+	/lib/systemd/systemd-sysv-install disable monitor
 }
+
 do_config() {
 	/opt/monitor/menu
 }
+
 do_schedule() {
     /opt/monitor/schedule
 }
+
 do_upgrade() {
     /opt/monitor/upgrade
 }
+
 do_check() {
-        #used to validade de monitor line
-        clear
+    #used to validade de monitor line
+    clear
 
-        echo "Vamos validar a configuração da linha de comando e passagem de parâmetros"
-        sleep 3
+    echo "Vamos validar a configuração da linha de comando e passagem de parâmetros"
+    sleep 3
 
-        echo "Veja como ficará a linha de comando:"
-        echo "$DAEMON $DAEMON_OPTS"
+    echo "Veja como ficará a linha de comando:"
+    echo "$DAEMON $DAEMON_OPTS"
 
-        sleep 5
-        echo " "
-        echo " "
-        $DAEMON $DAEMON_OPTS
+    sleep 5
+    echo " "
+    echo " "
+    $DAEMON $DAEMON_OPTS
 }
-do_start() {
-        # Return
-        #   0 if daemon has been started
-        #   1 if daemon was already running
-        #   2 if daemon could not be started
-        start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test  > /dev/null \
-                || return 1
-        start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 --make-pidfile \
-                --pidfile $PIDFILE --exec $DAEMON -- $DAEMON_OPTS \
-                || return 2
 
-        sleep 5
+do_start()
+{
+	# Return
+	#   0 if daemon has been started
+	#   1 if daemon was already running
+	#   2 if daemon could not be started
+	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
+		|| return 1
+	start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
+                --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- \
+		$DAEMON_OPTS \
+		|| return 2
+	
+	sleep 5
 }
 
 #
 # Function that stops the daemon/service
 #
-do_stop() {
-        # Return
-        #   0 if daemon has been stopped
-        #   1 if daemon was already stopped
-        #   2 if daemon could not be stopped
-        #   other if a failure occurred
-        start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
-        RETVAL="$?"
-        [ "$RETVAL" = 2 ] && return 2
-
-        sleep 5
-
-        start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
-        [ "$?" = 2 ] && return 2
-
-        if [ -f "$PIDFILE" ]
-        then
-                rm -f $PIDFILE
-        fi
-
-        return "$RETVAL"
+do_stop()
+{
+	# Return
+	#   0 if daemon has been stopped
+	#   1 if daemon was already stopped
+	#   2 if daemon could not be stopped
+	#   other if a failure occurred
+	start-stop-daemon --stop --quiet --retry=TERM/30/KILL/5 --pidfile $PIDFILE --name $NAME
+	RETVAL="$?"
+	[ "$RETVAL" = 2 ] && return 2
+	
+	sleep 5
+	
+	start-stop-daemon --stop --quiet --oknodo --retry=0/30/KILL/5 --exec $DAEMON
+	[ "$?" = 2 ] && return 2
+	
+	if [ -f "$PIDFILE" ]
+    then
+            rm -f $PIDFILE
+    fi
+	
+	return "$RETVAL"
 }
+
 #
 # Function that sends a SIGHUP to the daemon/service
 #
 do_reload() {
-        #
-        # If the daemon can reload its configuration without
-        # restarting (for example, when it is sent a SIGHUP),
-        # then implement that here.
-        #
-        start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
-        return 0
+	#
+	# If the daemon can reload its configuration without
+	# restarting (for example, when it is sent a SIGHUP),
+	# then implement that here.
+	#
+	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
+	return 0
 }
+
 case "$1" in
 	config)
           do_config
@@ -195,28 +199,6 @@ case "$1" in
           ;; 
 	upgrade)
           do_upgrade
-          ;;      
-	start)
-          [ "$VERBOSE" != no ] && log_daemon_msg "Startingsss $DESC " "$NAME"
-
-          do_error
-          do_start
-          case "$?" in
-                  0) [ "$VERBOSE" != no ] && log_end_msg 0 && echo "Retornou 0 ";;
-                  1) [ "$VERBOSE" != no ] && log_end_msg 0 && echo "Retornou 1 ";;
-                  2) [ "$VERBOSE" != no ] && log_end_msg 1 && echo "Retornou 2 ";;
-          esac
-          ;;
-	stop)
-          [ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-          do_stop
-          case "$?" in
-                  0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-                  2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-          esac
-          ;;
-  	status)
-          status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
           ;;
 	enable)
           do_enable
@@ -224,31 +206,48 @@ case "$1" in
 	disable)
           do_disable
           ;;
-	restart|force-reload)
-        #
-        # If the "reload" option is implemented then remove the
-        # 'force-reload' alias
-        #
-        log_daemon_msg "Restarting $DESC" "$NAME"
-        do_stop
-        case "$?" in
-                0|1)
-                        do_start
-                        case "$?" in
-                                0) log_end_msg 0 ;;
-                                1) log_end_msg 1 ;; # Old process is still running
-                                *) log_end_msg 1 ;; # Failed to start
-                        esac
-                        ;;
-                *)
-                        # Failed to stop
-                        log_end_msg 1
-                        ;;
-        esac
-        ;;
-*)
-        echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|enable|disable}" >&2
-        exit 3
-        ;;
+  start)
+    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
+    do_error
+	do_start
+    case "$?" in
+		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+  ;;
+  stop)
+	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+	do_stop
+	case "$?" in
+		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+	esac
+	;;
+  status)
+       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
+       ;;
+  restart|force-reload)
+	log_daemon_msg "Restarting $DESC" "$NAME"
+	do_stop
+	case "$?" in
+	  0|1)
+		do_start
+		case "$?" in
+			0) log_end_msg 0 ;;
+			1) log_end_msg 1 ;; # Old process is still running
+			*) log_end_msg 1 ;; # Failed to start
+		esac
+		;;
+	  *)
+	  	# Failed to stop
+		log_end_msg 1
+		;;
+	esac
+	;;
+  *)
+	echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|enable|disable}" >&2
+	exit 3
+	;;
 esac
+
 :
