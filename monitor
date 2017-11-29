@@ -102,10 +102,10 @@ do_error()
 
 }
 do_enable() {
-        /lib/sydostemd/systemd-sysv-install enable monitor
+	/lib/systemd/systemd-sysv-install enable monitor
 }
 do_disable() {
-        /lib/sydostemd/systemd-sysv-install disable monitor
+        /lib/systemd/systemd-sysv-install disable monitor
 }
 do_config() {
 	/opt/monitor/menu
