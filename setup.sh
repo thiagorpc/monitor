@@ -293,10 +293,11 @@ PCT=0
 		 source /opt/monitor/monitorDB
 		 source /opt/monitor/version
 		 
-		 sed -e "s%currentVersion=&currentVersion%currentVersion=$version%g" /opt/monitor/monitorDB \
-			> /opt/monitor/monitorDB.tmp
-	
+		 sed -e "s%currentVersion=$currentVersion%currentVersion=$version%g" /opt/monitor/monitorDB \ 
+		 > /opt/monitor/monitorDB.tmp
+		 
 		 mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
+
 	fi
 	#
 	sed -e "s%port=8500%port=$proxyPort%g" /opt/monitor/monitorDB \
