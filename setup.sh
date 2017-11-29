@@ -379,7 +379,7 @@ PCT=0
 PCT=0
 (
 	echo "*/1 * * * * /etc/init.d/monitor schedule" > customCron
-	echo "$(( ( RANDOM % 59 )  + 1 )) 4 * * * /etc/init.d/monitor schedule" >> customCron
+	echo "$(( ( RANDOM % 59 )  + 1 )) 4 * * * /etc/init.d/monitor upgrade" >> customCron
 	
 	crontab -i customCron
 	rm customCron
