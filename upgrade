@@ -25,5 +25,3 @@ then
 	go_upgrade
 fi
 #
-rm /opt/monitor/version
-#
