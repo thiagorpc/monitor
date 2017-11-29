@@ -293,8 +293,7 @@ PCT=0
 		 source /opt/monitor/monitorDB
 		 source /opt/monitor/version
 		 
-		 sed -e "s%currentVersion=$currentVersion%currentVersion=$version%g" /opt/monitor/monitorDB \ 
-		 > /opt/monitor/monitorDB.tmp
+		 sed -e "s%currentVersion=$currentVersion%currentVersion=$version%g" /opt/monitor/monitorDB > /opt/monitor/monitorDB.tmp
 		 
 		 mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 
@@ -380,6 +379,8 @@ PCT=0
 PCT=0
 (
 	echo "*/1 * * * * /etc/init.d/monitor schedule" > customCron
+	echo "$(( ( RANDOM % 59 )  + 1 )) 4 * * * /etc/init.d/monitor schedule" >> customCron
+	
 	crontab -i customCron
 	rm customCron
 	
