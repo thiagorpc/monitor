@@ -373,6 +373,7 @@ PCT=0
 	done
 	
 	sudo timedatectl set-timezone America/Sao_Paulo
+	sudo timedatectl set-ntp on
 	
 	init 6
 
