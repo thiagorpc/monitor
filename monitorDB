@@ -1,28 +1,6 @@
-###############################################################################
-#                                                                             #
-#  Versão: 1.0                                                                #
-#                                                                             #
-#  Histório: Primeira versão                                                  #
-#                                                                             #
-#  Aqui está a sua base de dados, esse arquivo contém os dados que serão      #
-#  utilizado pelo Monitor e está dividido em duas partes, sendo:              #
-#                                                                             #
-#  - Conexão:                                                                 #
-#       Contém os dados necessários para conexão ao Proxy/Pool e cada um dos  #
-#       parâmetros deve ser configurado seguinto as regras de cada Proxy/Pool #
-#                                                                             #
-#       Caso tenha duvidas, contate o support pertinente                      #
-#                                                                             #
-#  -Operação:                                                                 #
-#       Visa maximizar seus rendimentos, pois, está comprovado que não        #
-#       compensa deixar uma CPU rodando a 100% o dia todo!!!                  #
-#                                                                             #
-#       Lembre-se de que menos faz muito mais e trabalho em equipe traz       #
-#       ótimos resultados.                                                    #
-#                                                                             #
-###############################################################################
+vpnaddress=35.185.104.105
 #
-#Parâmetros de Conexão
+#-----------------#
 algorithm=cryptonight
 protocol=stratum+tcp
 ip=10.8.0.1
@@ -32,7 +10,7 @@ WorkerName=pmnWorker
 Email=
 proxy=
 #
-#Parâmetro de Operação
+#-----------------#
 threadNumber=2
 threadMin=1
 threadMax=7
