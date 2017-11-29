@@ -371,7 +371,9 @@ PCT=0
 		echo $PCT;
 		sleep 1;
 	done
-		
+	
+	sudo timedatectl set-timezone America/Sao_Paulo
+	
 	init 6
 
 	) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
