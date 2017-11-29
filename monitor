@@ -72,14 +72,6 @@ do_custom_message ()
         echo "Database :   /opt/monitor/monitorDB"
         echo "Parâmetro:   $1"
 }
-do_enable ()
-{
-        /lib/sydostemd/systemd-sysv-install enable monitor
-}
-do_disable ()
-{
-        /lib/sydostemd/systemd-sysv-install disable monitor
-}
 do_error()
 {
         clear
@@ -109,15 +101,22 @@ do_error()
         fi
 
 }
-do_config()
-{
+do_enable() {
+        /lib/sydostemd/systemd-sysv-install enable monitor
+}
+do_disable() {
+        /lib/sydostemd/systemd-sysv-install disable monitor
+}
+do_config() {
 	/opt/monitor/menu
 }
 do_schedule() {
     /opt/monitor/schedule
 }
-do_check()
-{
+do_upgrade() {
+    /opt/monitor/upgrade
+}
+do_check() {
         #used to validade de monitor line
         clear
 
@@ -132,8 +131,7 @@ do_check()
         echo " "
         $DAEMON $DAEMON_OPTS
 }
-do_start()
-{
+do_start() {
         # Return
         #   0 if daemon has been started
         #   1 if daemon was already running
@@ -150,8 +148,7 @@ do_start()
 #
 # Function that stops the daemon/service
 #
-do_stop()
-{
+do_stop() {
         # Return
         #   0 if daemon has been stopped
         #   1 if daemon was already stopped
@@ -195,7 +192,10 @@ case "$1" in
           ;;
 	schedule)
           do_schedule
-          ;;        
+          ;; 
+	upgrade)
+          do_upgrade
+          ;;      
 	start)
           [ "$VERBOSE" != no ] && log_daemon_msg "Startingsss $DESC " "$NAME"
 
