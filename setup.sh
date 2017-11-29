@@ -369,7 +369,7 @@ PCT=0
 	PCT=100
 	echo $PCT
 	sleep 1
-	#rm $mypwd"/setup.sh"
+	rm $mypwd"/setup.sh"
 
 	) | NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --title "Seja bem vindo ao Monitor" \
 		--gauge "\nConfigurando o suporte VPN." 10 70 0
