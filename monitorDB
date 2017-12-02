@@ -7,8 +7,8 @@ algorithm=cryptonight
 protocol=stratum+tcp
 ip=10.8.0.1
 port=8500
-WalletAddress=46yMYuV6DCc9nMSUXuFY1E6r5JcJu87Vz74mXXAxXN8XAP5X98X2u9DJTJ1h21PDGLeQxRLAB2buSWQz8NPeLTKH5v3bgmg
-WorkerName=pmnWorker
+WalletAddress=
+WorkerName=
 Email=
 proxy=
 #
