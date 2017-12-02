@@ -391,12 +391,6 @@ PCT=0
 		sleep 1;
 	done
 	
-	sudo timedatectl set-timezone America/Sao_Paulo
-	sudo timedatectl set-ntp on
-	sudo update-rc.d ntp defaults
-	sudo update-rc.d ntp enable
-	service ntp start
-		
 	#
 	init 6
 
