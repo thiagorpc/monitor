@@ -1,11 +1,11 @@
 #!/bin/sh
 ### BEGIN INIT INFO
-# Provides:          monitor-cpuminer
+# Provides:          monitor-cpu
 # Required-Start:    $network $local_fs
 # Required-Stop:
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: Monitor CPUminer
+# Short-Description: Monitor CPU
 # Description:       This application uses idle cpu time (for as much
 #                    as possible) to mine for bitcoins.
 ### END INIT INFO
@@ -21,6 +21,8 @@ DAEMON_OPTS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$DESC
 USER=root
+logDate=$(date "+%Y-%m-%d")
+logStatus="["$(date "+%Y-%m-%d %H:%M:%S")"]"
 #
 . /opt/monitor/monitorDB
 #
@@ -106,15 +108,107 @@ do_config() {
 	/opt/monitor/menu
 }
 
-do_schedule() {
-    /opt/monitor/schedule
+do_test() {
+
+	systemctl daemon-reload
+	
+	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
+		|| return 1
 }
 
+save_DB ()
+{
+	sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB > /opt/monitor/monitorDB.tmp
+	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
+	
+	systemctl daemon-reload
+	
+	service monitor stop
+	service monitor start
+}
+
+do_hash()
+{
+	systemctl daemon-reload
+	
+	tail -F /var/log/monitor_$logDate.log
+}
+do_schedule()
+{
+
+	echo "$logStatus service monitor schedule"  >> /var/log/monitor_$logDate.log
+	
+	systemctl daemon-reload
+	
+	# threadMax = 1 e threadMin 0, então, só liga e desliga o cliente.
+	# 
+	
+    if [ "1" = "$threadMax" -a "0" = "$threadMin" ]
+    then
+		#
+		#Para computadores que só possuem 1 nucleo a solução encontrada será iniciar 
+		# o processo e parar a monitoração de tempos em tempo.
+		if [ "$threadNumber" = "1" ]
+		then		
+			newthreadNumber=0
+			service monitor stop
+		else
+			newthreadNumber=1
+			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
+		fi
+		#
+    else
+		#
+		newthreadNumber=1
+	
+		now=$(date +%s)
+		#now=$(date --date="19:01" +%s)
+		begin=$(date --date="$lowCPUFrom" +%s)
+		end=$(date --date="$lowCPUTo" +%s)
+		#
+		#Valida se estamos em um periodo de horario comercial que requer baixo consumo de CPU.
+        if [ "$begin" -le "$now" -a "$now" -le "$end" ]
+        then
+            if [ "$lowCPU"="true" ]
+            then	
+				#Executa com apenas 1 vCPU se tiver em horario comercia.
+				newthreadNumber=1
+			
+				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
+            else
+				#Executa todas as CPU se a facildiade de horario Comercial estiver indisponivel.
+                newthreadNumber=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
+				
+				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
+            fi
+        else
+
+			newthreadNumber=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
+			#Executa todas as CPU fora do horario comercia.
+			
+			if [ "0" = "$newthreadNumber" -a "0" = "$threadNumber" ]
+			then
+				echo "stop"
+				service monitor stop
+			else
+				echo "save"
+				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
+			fi
+        fi
+    fi
+	
+}
 do_upgrade() {
+
+	systemctl daemon-reload
+	
     /opt/monitor/upgrade
 }
 
 do_check() {
+
+	systemctl daemon-reload
+	
     #used to validade de monitor line
     clear
 
@@ -127,20 +221,27 @@ do_check() {
     sleep 5
     echo " "
     echo " "
-    $DAEMON $DAEMON_OPTS
+	
 }
 
 do_start()
 {
+	systemctl daemon-reload
+	
+	echo "$logStatus service monitor start"  >> /var/log/monitor_$logDate.log
+	
 	# Return
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
-	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > /dev/null \
+	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > call_log \
 		|| return 1
-	start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
-                --make-pidfile --pidfile $PIDFILE --exec $DAEMON -- \
-		$DAEMON_OPTS \
+	
+		echo "threadNumber:		$threadNumber" >> /var/log/monitor_$logDate.log
+		
+		start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
+                --make-pidfile --pidfile $PIDFILE \
+				--startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS >> /var/log/monitor_$logDate.log 2>&1" \
 		|| return 2
 	
 	sleep 5
@@ -151,6 +252,10 @@ do_start()
 #
 do_stop()
 {
+	systemctl daemon-reload
+	
+	echo "$logStatus service monitor stop"  >> /var/log/monitor_$logDate.log
+	
 	# Return
 	#   0 if daemon has been stopped
 	#   1 if daemon was already stopped
@@ -182,72 +287,84 @@ do_reload() {
 	# restarting (for example, when it is sent a SIGHUP),
 	# then implement that here.
 	#
+	
+	systemctl daemon-reload
+	
 	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
 	return 0
 }
 
 case "$1" in
 	config)
-          do_config
-          ;;
+        do_config
+        ;;
 	check)
-          do_error
-          do_check
-          ;;
+        do_error
+        do_check
+        ;;
 	schedule)
-          do_schedule
-          ;; 
+		do_test
+		do_schedule
+		#
+		#case "$?" in
+		#	0)  echo ""		;;	#Não faz nada se o Monitor estiver fora de serviço.
+		#	1)  do_schedule ;;	#Só executa o serviço se o Monitor estiver em execução.
+		#esac
+        ;; 
 	upgrade)
-          do_upgrade
-          ;;
+		do_upgrade
+        ;;
 	enable)
-          do_enable
-          ;;
+        do_enable
+        ;;
 	disable)
-          do_disable
-          ;;
-  start)
-    [ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
-    do_error
-	do_start
-    case "$?" in
-		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-	esac
-  ;;
-  stop)
-	[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
-	do_stop
-	case "$?" in
-		0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
-		2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
-	esac
-	;;
-  status)
-       status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
-       ;;
-  restart|force-reload)
-	log_daemon_msg "Restarting $DESC" "$NAME"
-	do_stop
-	case "$?" in
-	  0|1)
+        do_disable
+        ;;
+	hash)
+        do_hash
+        ;;
+	start)
+		[ "$VERBOSE" != no ] && log_daemon_msg "Starting $DESC " "$NAME"
+		do_error
 		do_start
 		case "$?" in
-			0) log_end_msg 0 ;;
-			1) log_end_msg 1 ;; # Old process is still running
-			*) log_end_msg 1 ;; # Failed to start
+			0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+			2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
+		esac
+	;;
+	stop)
+		[ "$VERBOSE" != no ] && log_daemon_msg "Stopping $DESC" "$NAME"
+		do_stop
+		case "$?" in
+			0|1) [ "$VERBOSE" != no ] && log_end_msg 0 ;;
+			2) [ "$VERBOSE" != no ] && log_end_msg 1 ;;
 		esac
 		;;
-	  *)
-	  	# Failed to stop
-		log_end_msg 1
+	status)
+		status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
 		;;
-	esac
-	;;
-  *)
-	echo "Usage: $SCRIPTNAME {start|stop|status|restart|force-reload|enable|disable}" >&2
-	exit 3
-	;;
+	restart|force-reload)
+		log_daemon_msg "Restarting $DESC" "$NAME"
+		do_stop
+		case "$?" in
+		0|1)
+			do_start
+			case "$?" in
+				0) log_end_msg 0 ;;
+				1) log_end_msg 1 ;; # Old process is still running
+				*) log_end_msg 1 ;; # Failed to start
+			esac
+			;;
+		*)
+			# Failed to stop
+			log_end_msg 1
+			;;
+		esac
+		;;
+	*)
+		echo "Usage: $SCRIPTNAME {start|stop|status|restart|hash|enable|disable}" >&2
+		exit 3
+		;;
 esac
 
 :
