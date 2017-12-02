@@ -122,9 +122,23 @@ save_DB ()
 	mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 	
 	systemctl daemon-reload
+		
+	. /opt/monitor/monitorDB
 	
-	service monitor stop
-	service monitor start
+	echo "$logStatus Save database ----------------------------"  >> /var/log/monitor_$logDate.log	
+	echo "$logStatus Save database - threadRandom=	$threadRandom"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus Save database - threadNumber=	$threadNumber"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus Save database - threadMin=	$threadMin"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus Save database - threadMax=	$threadMax"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus Save database ----------------------------"  >> /var/log/monitor_$logDate.log
+	
+	if [ "$threadNumber" = "0" ]
+	then
+		service monitor stop
+	else
+		service monitor stop
+		service monitor start
+	fi
 }
 
 do_hash()
@@ -136,8 +150,6 @@ do_hash()
 do_schedule()
 {
 
-	echo "$logStatus service monitor schedule"  >> /var/log/monitor_$logDate.log
-	
 	systemctl daemon-reload
 	
 	# threadMax = 1 e threadMin 0, então, só liga e desliga o cliente.
@@ -145,19 +157,29 @@ do_schedule()
 	
     if [ "1" = "$threadMax" -a "0" = "$threadMin" ]
     then
+	
+		echo "$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin" \
+			>> /var/log/monitor_$logDate.log
+		
 		#
 		#Para computadores que só possuem 1 nucleo a solução encontrada será iniciar 
 		# o processo e parar a monitoração de tempos em tempo.
 		if [ "$threadNumber" = "1" ]
 		then		
 			newthreadNumber=0
-			service monitor stop
+			
+			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
+
 		else
 			newthreadNumber=1
 			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
 		fi
 		#
     else
+	
+		echo "$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin" \
+			>> /var/log/monitor_$logDate.log
+		
 		#
 		newthreadNumber=1
 	
@@ -196,7 +218,6 @@ do_schedule()
 			fi
         fi
     fi
-	
 }
 do_upgrade() {
 
@@ -228,7 +249,7 @@ do_start()
 {
 	systemctl daemon-reload
 	
-	echo "$logStatus service monitor start"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus service monitor start - threadNumber=$threadNumber"  >> /var/log/monitor_$logDate.log
 	
 	# Return
 	#   0 if daemon has been started
@@ -236,8 +257,6 @@ do_start()
 	#   2 if daemon could not be started
 	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > call_log \
 		|| return 1
-	
-		echo "threadNumber:		$threadNumber" >> /var/log/monitor_$logDate.log
 		
 		start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
                 --make-pidfile --pidfile $PIDFILE \
@@ -253,8 +272,7 @@ do_start()
 do_stop()
 {
 	systemctl daemon-reload
-	
-	echo "$logStatus service monitor stop"  >> /var/log/monitor_$logDate.log
+	echo "$logStatus service monitor stop - threadNumber=$threadNumber"  >> /var/log/monitor_$logDate.log
 	
 	# Return
 	#   0 if daemon has been stopped
