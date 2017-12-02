@@ -158,7 +158,7 @@ edit_proxy() {
 
 go_proxy() {
         menu_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "Cancelar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
+                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
                 "Pool-Algoritmo" "     $algorithm" \
                 "Pool-Protocolo" "     $protocol" \
                 "Pool-Endereço-IP" "     $ip" \
@@ -192,7 +192,7 @@ go_operation() {
 
 go_main() {
         main=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "Cancelar" --menu "Selecione a opção desejada" 15 60 4 \
+                --title "$iTitle" --cancel-button "Sair" --ok-button "Selecionar" --menu "Selecione a opção desejada" 15 60 4 \
                 "1" "Editar o módulo de conexão com Proxy XMR?"  \
                 "2" "Editar os parametros de operação?" \
                 3>&1 1>&2 2>&3)
@@ -216,4 +216,3 @@ then
 else
         clear
 fi
-
