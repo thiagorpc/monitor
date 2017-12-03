@@ -41,6 +41,8 @@ m0009="Defina o endereço da sua Wallet"
 m0010="Defina um nome para o parâmetro WorkerName"
 m0011="Informe o seu endereço de E-mail"
 m0012="Defina um proxy para conexão com a Internet"
+m0013="Deseja utilizar um metodo randomico para alocar o número de Threads?"
+m0014="Defina o número de Threads para mineração"
 
 save_DB(){
         sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
@@ -185,9 +187,77 @@ go_proxy() {
                 go_main
         fi
 }
+##################################################################################################################
+
+edit_threadNumber() {
+        new_threadNumber=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $threadNumber" 8 78 $threadNumber \
+                --title "$m0014" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "threadNumber" "$threadNumber" "$new_threadNumber"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_threadRandom() {
+
+		status_1=""
+		status_2=""
+		
+		if [ $threadRandom = "ON" ] 
+		then
+			status_1="ON"
+			status_2="OFF"
+		else
+			status_1="OFF"
+			status_2="ON"
+		fi
+
+        new_threadRandom=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --radiolist \
+			" " 15 50 5 \
+			"ON" "Habilitar método randômico?" $status_1 \
+			"OFF" "Desabilitar método randômico?" $status_2 \
+			--title "$m0013" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "threadRandom" "$threadRandom" "$new_threadRandom"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
 
 go_operation() {
-        echo "operation"
+        menu_operation=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
+                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
+                "Metodo-Randomico" "     $threadRandom" \
+                "CPU-Threads" "     $threadNumber" \
+                "CPU-Threads-Minimo" "     $threadMin" \
+                "CPU-Threads-Máximo" "     $threadMax" \
+                "CPU-Baixo-Consumo" "     $lowCPU" \
+                "Baixo-Consumo-Inicio" "     $lowCPUFrom" \
+                "Baixo-Consumo-Fim" "     $lowCPUTo" \
+                3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                case $menu_operation in
+                        Metodo-Randomico) edit_threadRandom;;
+                        CPU-Threads) edit_threadNumber;;
+                        CPU-Threads-Minimo) edit_threadMin;;
+                        CPU-Threads-Máximo) edit_threadMax;;
+                        CPU-Baixo-Consumo) edit_lowCPU;;
+                        Baixo-Consumo-Inicio) edit_lowCPUFrom;;
+                        Baixo-Consumo-Fim) edit_lowCPUTo;;
+                esac
+        else
+                go_main
+        fi
 }
 
 go_main() {
@@ -216,3 +286,4 @@ then
 else
         clear
 fi
+
