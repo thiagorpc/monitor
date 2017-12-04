@@ -22,6 +22,7 @@ PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$DESC
 USER=root
 logDate=$(date "+%Y-%m-%d")
+logFile=/var/log/monitor_$logDate.log
 logStatus="["$(date "+%Y-%m-%d %H:%M:%S")"]"
 #
 ##Black        0;30     Dark Gray     1;30
@@ -82,6 +83,15 @@ do_custom_message ()
         echo "Parâmetro:   $1"
 }
 
+go_DeleteOldFile() {
+	echo ""
+	
+	
+	##############################################################
+	#   Rotinas de manuteção do programa
+	#
+	#find /var/log/monitor* -mtime -2 -exec rm {} \;
+}
 do_error() {
         clear
 
@@ -137,131 +147,141 @@ save_DB () {
 		
 	. /opt/monitor/monitorDB
 	
-	echo "${cCyan}$logStatus Save database  -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
-	echo "${cCyan}$logStatus Save database  - threadRandom	$threadRandom${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database  - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database  - threadMin	$threadMin${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database  - threadMax	$threadMax${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database  -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log
+	wl="$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )..."
+	echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                     Save database                     |${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Algorithm:		$algorithm                            ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Protocol:		$protocol                             ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  IP Address:		$ip              	  	              ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Port:			$port	     			              ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Wallet Address:	$wl	      	                          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  WorkerName:		$WorkerName  	                      ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  E-mail:		$Email	        	                      ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Internet Proxy:	$proxy  	  	                      ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  threadNumber:		$threadNumber			          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile	
+	echo "${cCyan}$logStatus |  threadRandom:		$threadRandom			          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  threadNumber:		$threadNumber			          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  threadMin:		$threadMin				              ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  threadMax:		$threadMax				              ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile	
+	echo "${cCyan}$logStatus |  lowCPU:		$lowCPU             	                  ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  lowCPUFrom:		$lowCPUFrom           		          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  lowCPUTo:		$lowCPUTo                             ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  threadNumber:		$threadNumber                     ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  Stop reference:	$stopAgain	                          ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile
+	echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	
 }
 
 do_hash()
 {
 	systemctl daemon-reload
 	
-	tail -F /var/log/monitor_$logDate.log
-}
-
-go_StopMonitor()
-{
-
-	do_test
-	case "$?" in
-		0)  echo "${cRed}Date now		$(date "+%F %T")${cNC}"  >> /var/log/monitor_$logDate.log && exit  >> /var/log/monitor_$logDate.log
-		;;	#Não faz nada se o Monitor estiver fora de serviço.
-	esac
-		
-	systemctl daemon-reload
+	file=/var/log/monitor_$logDate.log
 	
-	if [ "$EnableStartStop" = "ON" ]
+	if [ -f $f ]
 	then
-		
-		now=$(date +%s)
-		point=$(date --date="$stopAgain" +%s)
-        
-		if [ "$point" -le "$now" ]
-		then
-		
-			echo "${cRed}$logStatus CPU Start/Stop enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
-			echo "${cRed}$logStatus CPU Start/Stop enable - EnableStartStop	$EnableStartStop${cNC}"  >> /var/log/monitor_$logDate.log
-			echo "${cRed}$logStatus CPU Start/Stop enable - Date now		$(date "+%F %T")${cNC}"  >> /var/log/monitor_$logDate.log
-			echo "${cRed}$logStatus CPU Start/Stop enable - stopAgain		$stopAgain${cNC}"  >> /var/log/monitor_$logDate.log
-			echo "${cRed}$logStatus CPU Start/Stop enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log
-				
-			service monitor stop
-			
-			#     Defini quando o Monitor deve começar a minerar novamente, dado que ele 
-			# está parado devido a função "stopAgain"
-			#
-			
-			startAgaindelay=$(awk -v min=$startAgainMin -v max=$startAgainMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
-			newstartAgain=$(date -d "+ $startAgaindelay minute" "+%F %T")
-		
-			save_DB "startAgain" "\"$startAgain\"" "\"$newstartAgain\""
-		fi
+		tail -F $file
 	else
-		service monitor stop
+		touch $file
+		tail -F tail -F $file
 	fi
 }
 
-go_StartMonitor()
-{
+do_stopMonitorbySchedule() {
 
-	do_test
-	case "$?" in
-		1)  echo "${cGreen}Date now		$(date "+%F %T")${cNC}"  >> /var/log/monitor_$logDate.log && exit  >> /var/log/monitor_$logDate.log
-		;;	#Não faz nada se o serviço estiver rodando.
-	esac
+	service monitor stop
 	
-	if [ "$threadNumber" != "0" ]
-	then
-		systemctl daemon-reload
+	startAgaindelay=$(awk -v min=$startAgainMin -v max=$startAgainMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
+	newstartAgain=$(date -d "+ $startAgaindelay minute" "+%F %T")
+	
+	save_DB "startAgain" "\"$startAgain\"" "\"$newstartAgain\""
+}
+
+do_startMonitorbySchedule() {
+
+	stopAgaindelay=$(awk -v min=$stopAgainMin -v max=$stopAgainMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
+	newstopAgain=$(date -d "+ $stopAgaindelay minute" "+%F %T")
+	
+	save_DB "stopAgain" "\"$stopAgain\"" "\"$newstopAgain\""
 		
-		if [ "$EnableStartStop" = "ON" ]
-		then
-			
-			now=$(date +%s)
-			point=$(date --date="$startAgain" +%s)
-			
-			if [ "$point" -le "$now" ]
-			then
-			
-				echo "${cGreen}$logStatus CPU Start/Stop enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
-				echo "${cGreen}$logStatus CPU Start/Stop enable - EnableStartStop		$EnableStartStop${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cGreen}$logStatus CPU Start/Stop enable - Date now	$(date "+%F %T")${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cGreen}$logStatus CPU Start/Stop enable - startAgain		$startAgain${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cGreen}$logStatus CPU Start/Stop enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log
-					
-				service monitor stop
-				
-				#     Defini quando o Monitor deve começar a minerar novamente, dado que ele 
-				# está parado devido a função "stopAgain"
-				#
-				
-				stopAgaindelay=$(awk -v min=$stopAgainMin -v max=$stopAgainMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
-				newstopAgain=$(date -d "+ $stopAgaindelay minute" "+%F %T")
-			
-				save_DB "stopAgain" "\"$stopAgain\"" "\"$newstopAgain\""
-		
-				service monitor start
-			fi
-		else
-			service monitor start
-		fi	
-	fi
+	service monitor start
 }
 
 go_clock()
 {
-	echo ""
+	systemctl daemon-reload
+
+	go_DeleteOldFile
+		
+	now=$(date +%s)
+	#now=$(date --date="19:01" +%s)
+	stop=$(date --date="$stopAgain" +%s)
+	start=$(date --date="$startAgain" +%s)
+	
+	#Essa função será acionada para parar o Monitor quando a hora atual estiver ente Stop e Start 
+	#stop	2017-12-04 01:36:08  --|
+	#   		                   |--- (here)
+	#start	2017-12-04 12:44:01  --|
+	
+    if [ "$stop" -le "$now" -a "$now" -le "$start" ]
+    then
+		#1 passo: Verifica se Monitor está ativo e parar ele se for preciso.
+		#2 passo: Se o monitor não estiver ativo, não é para fazer nada.
+		
+		#Para o serviço do monitor se ele estiver ativo
+		do_test
+		if [ $? = 1 ]
+		then
+			echo "${cRed}$logStatus service monitor - Status running${cNC}"  >> $logFile
+			
+			if [ "$EnableStartStop" = "ON" ]
+			then
+				do_stopMonitorbySchedule
+			fi
+		else
+			if [ "$start" -le "$now" ]
+			then
+				echo "${cRed}$logStatus 444444444444444444444444444444444444444444444${cNC}"  >> $logFile
+				do_startMonitorbySchedule
+			else
+				exit
+			fi
+		fi
+	else
+	    #1 passo: Verifica se Monitor está desativado e ativar ele se for preciso.
+		#2 passo: Se o monitor estiver ativo, não é para fazer nada.
+			
+		do_test
+		if [ $? = 0 ]
+		then
+			if [ "$EnableStartStop" = "ON" ]
+			then
+				if [ "$start" -le "$now" ]
+				then
+					do_startMonitorbySchedule
+				fi
+			fi
+		else
+			if [ "$start" -le "$now" ]
+			then
+				do_stopMonitorbySchedule
+			else
+				exit
+			fi
+		fi
+	fi
 }
 
 do_schedule()
 {
-
-	##############################################################
-	#   Rotinas de manuteção do programa
-	#
-	find /var/log/monitor* -mtime -2 -exec rm {} \;
-	
-	
-	##############################################################
-	#   Rotinas de schedule
-	#
-	go_StopMonitor
-	
-	systemctl daemon-reload
-	
 	# threadMax = 1 e threadMin 0, então, só liga e desliga o Monitor.
 	# 
 	
@@ -274,12 +294,12 @@ do_schedule()
 		then		
 			save_DB "threadNumber" "$threadNumber" "0"
 			
-			go_StartMonitor
+			go_clock
 		else
 		
 			save_DB "threadNumber" "$threadNumber" "1"
 			
-			go_StartMonitor
+			go_clock
 		fi
 		#
     else
@@ -294,24 +314,29 @@ do_schedule()
         then
             if [ "$lowCPU" = "ON" ]
             then
-				echo "${cLightPurple}$logStatus Low CPU Enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
-				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPU		$lowCPU${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPUFrom	$lowCPUFrom${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPUTo		$lowCPUTo${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cLightPurple}$logStatus Low CPU Enable - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
-				echo "${cLightPurple}$logStatus Low CPU Enable -------------------------------------${cNC}"  >> /var/log/monitor_$logDate.log
+				
+				echo "${cLightPurple}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |                     Low CPU enable                    |${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |                                                        ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |  lowCPU:		$lowCPU             	                 ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |  lowCPUFrom:		$lowCPUFrom           		         ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |  lowCPUTo:		$lowCPUTo                            ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |  threadNumber:		$threadNumber                    ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus |                                                        ${cNC}"  >> $logFile
+				echo "${cLightPurple}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 
 				#Executa com apenas 1 vCPU se tiver em horario comercia.
 				save_DB "threadNumber" "$threadNumber" "1"
 				
-				go_StartMonitor
+				go_clock
             else
 				#Executa todas as CPU se a facildiade de horario Comercial estiver indisponivel.
                 newRandom=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
 				
 				save_DB "threadNumber" "$threadNumber" "$newRandom"
 				
-				go_StartMonitor
+				go_clock
             fi
         else
 	
@@ -322,7 +347,7 @@ do_schedule()
 			then
 				save_DB "threadNumber" "$threadNumber" "$newRandom"
 				
-				go_StartMonitor
+				go_clock
 			fi
         fi
     fi
@@ -356,7 +381,26 @@ do_start()
 {
 	systemctl daemon-reload
 	
-	echo "${cGreen}$logStatus service monitor start - threadNumber=$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
+	wl="$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )..."
+	echo "${cGreen}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |                     Start Monitor                     |${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |                                                       ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Algorithm:		$algorithm                            ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Protocol:		$protocol                             ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  IP Address:		$ip              	  	          ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Port:			$port	     			              ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Wallet Address:	$wl	      	                      ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  WorkerName:		$WorkerName  	                  ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  E-mail:		$Email	        	                  ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Internet Proxy:	$proxy  	  	                  ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  threadNumber:		$threadNumber			          ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |                                                       ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  Stop reference:	$stopAgain	                      ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus |                                                       ${cNC}"  >> $logFile
+	echo "${cGreen}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 	
 	# Return
 	#   0 if daemon has been started
@@ -367,10 +411,11 @@ do_start()
 		
 		start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
                 --make-pidfile --pidfile $PIDFILE \
-				--startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS >> /var/log/monitor_$logDate.log 2>&1" \
+				--startas /bin/bash -- -c "exec $DAEMON $DAEMON_OPTS >> $logFile 2>&1" \
 		|| return 2
 	
 	sleep 5
+	
 }
 
 #
@@ -379,8 +424,16 @@ do_start()
 do_stop()
 {
 	systemctl daemon-reload
-
-	echo "${cRed}$logStatus service monitor stop${cNC}"  >> /var/log/monitor_$logDate.log
+	
+	echo "${cRed}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |                   Operation stopped                   |${cNC}"  >> $logFile
+	echo "${cRed}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |                                                       ${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |  Stop reference:	$stopAgain	                      ${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
+	echo "${cRed}$logStatus |                                                       ${cNC}"  >> $logFile
+	echo "${cRed}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 	
 	# Return
 	#   0 if daemon has been stopped
@@ -432,7 +485,7 @@ case "$1" in
         do_check
         ;;
 	schedule)
-		do_schedule
+		go_clock #do_schedule
         ;; 
 	upgrade)
 		do_upgrade
@@ -464,6 +517,7 @@ case "$1" in
 		esac
 		;;
 	status)
+		systemctl daemon-reload
 		status_of_proc "$DAEMON" "$NAME" && exit 0 || exit $?
 		;;
 	restart|force-reload)
