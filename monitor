@@ -24,6 +24,21 @@ USER=root
 logDate=$(date "+%Y-%m-%d")
 logStatus="["$(date "+%Y-%m-%d %H:%M:%S")"]"
 #
+##Black        0;30     Dark Gray     1;30
+##Red          0;31     Light Red     1;31
+##Green        0;32     Light Green   1;32
+##Brown/Orange 0;33     Yellow        1;33
+##Blue         0;34     Light Blue    1;34
+##Purple       0;35     Light Purple  1;35
+##Cyan         0;36     Light Cyan    1;36
+##Light Gray   0;37     White         1;37
+
+cCyan='\033[0;36m'
+cGreen='\033[0;32m'
+cRed='\033[0;31m'
+cLightPurple='\033[0;35m'
+cNC='\033[0m' # No Color
+
 . /opt/monitor/monitorDB
 #
 x_proxy=""
@@ -124,19 +139,18 @@ save_DB ()
 	systemctl daemon-reload
 		
 	. /opt/monitor/monitorDB
+
+	printf "I ${RED}love${NC} Stack Overflow\n"
 	
-	echo "$logStatus Save database ----------------------------"  >> /var/log/monitor_$logDate.log	
-	echo "$logStatus Save database - threadRandom=	$threadRandom"  >> /var/log/monitor_$logDate.log
-	echo "$logStatus Save database - threadNumber=	$threadNumber"  >> /var/log/monitor_$logDate.log
-	echo "$logStatus Save database - threadMin=	$threadMin"  >> /var/log/monitor_$logDate.log
-	echo "$logStatus Save database - threadMax=	$threadMax"  >> /var/log/monitor_$logDate.log
-	echo "$logStatus Save database ----------------------------"  >> /var/log/monitor_$logDate.log
-	
-	if [ "$threadNumber" = "0" ]
+	echo "${cCyan}$logStatus Save database ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
+	echo "${cCyan}$logStatus Save database - threadRandom	$threadRandom${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database - threadMin		$threadMin${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database - threadMax		$threadMax${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log
+
+	if [ "$threadNumber" != "0" ]
 	then
-		service monitor stop
-	else
-		service monitor stop
 		service monitor start
 	fi
 }
@@ -158,7 +172,7 @@ do_schedule()
     if [ "1" = "$threadMax" -a "0" = "$threadMin" ]
     then
 	
-		echo "$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin" \
+		echo "${cGreen}$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin${cNC}" \
 			>> /var/log/monitor_$logDate.log
 		
 		#
@@ -168,16 +182,21 @@ do_schedule()
 		then		
 			newthreadNumber=0
 			
+			service monitor stop
+				
 			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
 
 		else
 			newthreadNumber=1
+			
+			service monitor stop
+				
 			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
 		fi
 		#
     else
 	
-		echo "$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin" \
+		echo "${cGreen}$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin${cNC}" \
 			>> /var/log/monitor_$logDate.log
 		
 		#
@@ -191,29 +210,42 @@ do_schedule()
 		#Valida se estamos em um periodo de horario comercial que requer baixo consumo de CPU.
         if [ "$begin" -le "$now" -a "$now" -le "$end" ]
         then
-            if [ "$lowCPU"="true" ]
-            then	
+            if [ "$lowCPU"="ON" ]
+            then
+
+				service monitor stop
+					
 				#Executa com apenas 1 vCPU se tiver em horario comercia.
 				newthreadNumber=1
 			
+				echo "${cLightPurple}$logStatus Low CPU Enable ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
+				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPU		$lowCPU${cNC}"  >> /var/log/monitor_$logDate.log
+				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPUFrom	$lowCPUFrom${cNC}"  >> /var/log/monitor_$logDate.log
+				echo "${cLightPurple}$logStatus Low CPU Enable - lowCPUTo		$lowCPUTo${cNC}"  >> /var/log/monitor_$logDate.log
+				echo "${cLightPurple}$logStatus Low CPU Enable - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
+				echo "${cLightPurple}$logStatus Low CPU Enable ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log
+					
 				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
             else
+				
+				service monitor stop
+					
 				#Executa todas as CPU se a facildiade de horario Comercial estiver indisponivel.
                 newthreadNumber=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
 				
 				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
             fi
         else
-
+	
 			newthreadNumber=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
 			#Executa todas as CPU fora do horario comercia.
 			
 			if [ "0" = "$newthreadNumber" -a "0" = "$threadNumber" ]
 			then
-				echo "stop"
 				service monitor stop
 			else
-				echo "save"
+				service monitor stop
+
 				save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
 			fi
         fi
@@ -249,7 +281,7 @@ do_start()
 {
 	systemctl daemon-reload
 	
-	echo "$logStatus service monitor start - threadNumber=$threadNumber"  >> /var/log/monitor_$logDate.log
+	echo "${cGreen}$logStatus service monitor start - threadNumber=$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
 	
 	# Return
 	#   0 if daemon has been started
@@ -272,7 +304,8 @@ do_start()
 do_stop()
 {
 	systemctl daemon-reload
-	echo "$logStatus service monitor stop - threadNumber=$threadNumber"  >> /var/log/monitor_$logDate.log
+
+	echo "${cRed}$logStatus service monitor stop${cNC}"  >> /var/log/monitor_$logDate.log
 	
 	# Return
 	#   0 if daemon has been stopped
