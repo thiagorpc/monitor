@@ -3,6 +3,9 @@
 source /opt/monitor/monitorDB
 #
 go_upgrade() {
+	
+	rm /opt/setup*
+	
 	cd /opt/
 	wget https://raw.githubusercontent.com/thiagorpc/monitor/master/setup.sh
 	chmod 775 setup.sh
