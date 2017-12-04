@@ -1,13 +1,10 @@
 #!/bin/bash
 #
 #
+
+. /opt/monitor/monitorDB
+
 clear
-
-load_DB() {
-        . /opt/monitor/monitorDB
-}
-
-load_DB
 
 readarray -t newtcols < /etc/newt/palette
 myBackground=blue
@@ -56,7 +53,7 @@ save_DB(){
 
         mv /opt/monitor/monitorDB.tmp /opt/monitor/monitorDB
 
-        load_DB
+        . /opt/monitor/monitorDB
 }
 
 edit_algorithm()
