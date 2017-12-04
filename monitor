@@ -142,12 +142,12 @@ save_DB ()
 
 	printf "I ${RED}love${NC} Stack Overflow\n"
 	
-	echo "${cCyan}$logStatus Save database ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
-	echo "${cCyan}$logStatus Save database - threadRandom	$threadRandom${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database - threadMin		$threadMin${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database - threadMax		$threadMax${cNC}"  >> /var/log/monitor_$logDate.log
-	echo "${cCyan}$logStatus Save database ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database  ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log	
+	echo "${cCyan}$logStatus Save database  - threadRandom	$threadRandom${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database  - threadNumber	$threadNumber${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database  - threadMin	$threadMin${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database  - threadMax	$threadMax${cNC}"  >> /var/log/monitor_$logDate.log
+	echo "${cCyan}$logStatus Save database  ----------------------------${cNC}"  >> /var/log/monitor_$logDate.log
 
 	if [ "$threadNumber" != "0" ]
 	then
@@ -171,10 +171,6 @@ do_schedule()
 	
     if [ "1" = "$threadMax" -a "0" = "$threadMin" ]
     then
-	
-		echo "${cGreen}$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin${cNC}" \
-			>> /var/log/monitor_$logDate.log
-		
 		#
 		#Para computadores que só possuem 1 nucleo a solução encontrada será iniciar 
 		# o processo e parar a monitoração de tempos em tempo.
@@ -183,7 +179,7 @@ do_schedule()
 			newthreadNumber=0
 			
 			service monitor stop
-				
+		
 			save_DB "threadNumber" "$threadNumber" "$newthreadNumber"
 
 		else
@@ -195,10 +191,6 @@ do_schedule()
 		fi
 		#
     else
-	
-		echo "${cGreen}$logStatus service monitor schedule - threadNumber=$threadNumber threadMax=$threadMax threadMin=$threadMin${cNC}" \
-			>> /var/log/monitor_$logDate.log
-		
 		#
 		newthreadNumber=1
 	
@@ -251,6 +243,7 @@ do_schedule()
         fi
     fi
 }
+
 do_upgrade() {
 
 	systemctl daemon-reload
