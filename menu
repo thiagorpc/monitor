@@ -1,6 +1,8 @@
 #!/bin/bash
 #
 #
+clear
+
 load_DB() {
         . /opt/monitor/monitorDB
 }
@@ -15,9 +17,9 @@ newtcols_error=(
         border=black,lightgray
         textbox=black,lightgray
         button=white,red
-
-        root=,$myBackground
-        checkbox=,$myBackground
+		
+		root=,$myBackground
+        checkbox=black,lightgray
         entry=,$myBackground
         label=$myBackground,
         actlistbox=,$myBackground
@@ -27,12 +29,11 @@ newtcols_error=(
         disabledentry=$myBackground,
 )
 
-
-iTitle="Monitor config interface"
+iTitle="Monitor Config Interface"
 m0001="Utilize essa ferramenta para alterar as configurações da base de dados do Monitor"
 m0002="Deseja prosseguir?"
 m0003="Veja abaixo a configuração atual, para alterar, selecione o número a frente de cada parâmetro"
-m0004="Valor atual:"
+m0004="\nValor atual:"
 m0005="Defina o novo endereço IP ou URL para conexão com a Pool"
 m0006="Defina o novo número da porta de conexão com a Pool"
 m0007="Defina o novo protocolo de conexão com a Pool"
@@ -41,8 +42,13 @@ m0009="Defina o endereço da sua Wallet"
 m0010="Defina um nome para o parâmetro WorkerName"
 m0011="Informe o seu endereço de E-mail"
 m0012="Defina um proxy para conexão com a Internet"
-m0013="Deseja utilizar um metodo randomico para alocar o número de Threads?"
+m0013="Deseja utilizar um método randômico para alocar o número de Threads?"
 m0014="Defina o número de Threads para mineração"
+m0015="Defina o número mínimo de Threads para mineração"
+m0016="Defina o número máximo de Threads para mineração"
+m0017="Ativar monitoração de horário para consumo de CPU?"
+m0018="Início do horário de baixo consumo de CPU?"
+m0019="Termino do horário de baixo consumo de CPU?"
 
 save_DB(){
         sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
@@ -55,7 +61,7 @@ save_DB(){
 
 edit_algorithm()
 {
-        new_algorithm=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $algorithm" 8 78 $algorithm \
+        new_algorithm=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $algorithm" 9 78 $algorithm \
                 --title "$m0008" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -68,7 +74,7 @@ edit_algorithm()
 }
 
 edit_protocol(){
-        new_protocol=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $protocol" 8 78 $protocol \
+        new_protocol=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $protocol" 9 78 $protocol \
                 --title "$m0007" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -81,7 +87,7 @@ edit_protocol(){
 }
 
 edit_ipAddress(){
-        new_ip=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $ip" 8 78 $ip \
+        new_ip=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $ip" 9 78 $ip \
                 --title "$m0005" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -94,7 +100,7 @@ edit_ipAddress(){
 }
 
 edit_port () {
-        new_port=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $port" 8 78 $port \
+        new_port=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $port" 9 78 $port \
                 --title "$m0006" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -107,7 +113,7 @@ edit_port () {
 }
 
 edit_WalletAddress() {
-        new_WalletAddress=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $WalletAddress" 8 78 $WalletAddress \
+        new_WalletAddress=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $WalletAddress" 9 78 $WalletAddress \
                 --title "$m0009" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -120,7 +126,7 @@ edit_WalletAddress() {
 }
 
 edit_WorkerName() {
-        new_WorkerName=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $WorkerName" 8 78 $WorkerName \
+        new_WorkerName=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $WorkerName" 9 78 $WorkerName \
                 --title "$m0010" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -133,7 +139,7 @@ edit_WorkerName() {
 }
 
 edit_Email() {
-        new_Email=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $Email" 8 78 $Email \
+        new_Email=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $Email" 9 78 $Email \
                 --title "$m0011" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -146,7 +152,7 @@ edit_Email() {
 }
 
 edit_proxy() {
-        new_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $proxy" 8 78 $proxy \
+        new_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $proxy" 9 78 $proxy \
                 --title "$m0012" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -160,7 +166,7 @@ edit_proxy() {
 
 go_proxy() {
         menu_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
+                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "\n        Editar os parâmetros de conexão ao Proxy" 17 60 8 \
                 "Pool-Algoritmo" "     $algorithm" \
                 "Pool-Protocolo" "     $protocol" \
                 "Pool-Endereço-IP" "     $ip" \
@@ -187,20 +193,8 @@ go_proxy() {
                 go_main
         fi
 }
+
 ##################################################################################################################
-
-edit_threadNumber() {
-        new_threadNumber=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $threadNumber" 8 78 $threadNumber \
-                --title "$m0014" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
-
-        exitstatus=$?
-        if [ $exitstatus = 0 ]; then
-                save_DB "threadNumber" "$threadNumber" "$new_threadNumber"
-                go_operation
-        else
-            go_operation
-        fi
-}
 
 edit_threadRandom() {
 
@@ -217,7 +211,7 @@ edit_threadRandom() {
 		fi
 
         new_threadRandom=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --radiolist \
-			" " 15 50 5 \
+			" " 8 60 2 \
 			"ON" "Habilitar método randômico?" $status_1 \
 			"OFF" "Desabilitar método randômico?" $status_2 \
 			--title "$m0013" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
@@ -231,10 +225,103 @@ edit_threadRandom() {
         fi
 }
 
+edit_threadNumber() {
+        new_threadNumber=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $threadNumber" 9 78 $threadNumber \
+                --title "$m0014" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
 
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "threadNumber" "$threadNumber" "$new_threadNumber"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_threadMin() {
+        new_threadMin=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $threadMin" 9 78 $threadMin \
+                --title "$m0015" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "threadMin" "$threadMin" "$new_threadMin"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_threadMax() {
+        new_threadMax=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $threadMax" 9 78 $threadMax \
+                --title "$m0016" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "threadMax" "$threadMax" "$new_threadMax"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_lowCPU() {
+
+		status_1=""
+		status_2=""
+		
+		if [ $threadRandom = "ON" ] 
+		then
+			status_1="ON"
+			status_2="OFF"
+		else
+			status_1="OFF"
+			status_2="ON"
+		fi
+
+        new_lowCPU=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --radiolist \
+			" " 8 60 2 \
+			"ON" "Habilitar baixo consumo de CPU?" $status_1 \
+			"OFF" "Desabilitar baixo consumo de CPU?" $status_2 \
+			--title "$m0017" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "lowCPU" "$lowCPU" "$new_lowCPU"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_lowCPUFrom() {
+        new_lowCPUFrom=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $lowCPUFrom - Seguir o modelo HH:MM, Exemplo:22:30" 9 78 $lowCPUFrom \
+                --title "$m0018" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "lowCPUFrom" "$lowCPUFrom" "$new_lowCPUFrom"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_lowCPUTo() {
+        new_lowCPUTo=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $lowCPUTo - Seguir o modelo HH:MM, Exemplo:22:30" 9 78 $lowCPUTo \
+                --title "$m0019" --cancel-button "Cancelar" --ok-button "Salvar" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "lowCPUTo" "$lowCPUTo" "$new_lowCPUTo"
+                go_operation
+        else
+            go_operation
+        fi
+}
+				
 go_operation() {
         menu_operation=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "Selecione o parâmetro que deseja alterar" 22 68 16 \
+                --title "$iTitle" --cancel-button "Voltar" --ok-button "Selecionar" --menu "\n             Editar os parâmetros de operação" 16 60 7 \
                 "Metodo-Randomico" "     $threadRandom" \
                 "CPU-Threads" "     $threadNumber" \
                 "CPU-Threads-Minimo" "     $threadMin" \
@@ -262,9 +349,9 @@ go_operation() {
 
 go_main() {
         main=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "Sair" --ok-button "Selecionar" --menu "Selecione a opção desejada" 15 60 4 \
+                --title "$iTitle" --cancel-button "Sair" --ok-button "Selecionar" --menu "\n       Selecione abaixo a opção desejada" 11 60 2 \
                 "1" "Editar o módulo de conexão com Proxy XMR?"  \
-                "2" "Editar os parametros de operação?" \
+                "2" "Editar os parâmetros de operação?" \
                 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -286,4 +373,3 @@ then
 else
         clear
 fi
-
