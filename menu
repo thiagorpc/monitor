@@ -31,14 +31,16 @@ m0001="Utilize essa ferramenta para alterar as configurações da base de dados 
 m0002="Deseja prosseguir?"
 m0003="Veja abaixo a configuração atual, para alterar, selecione o número a frente de cada parâmetro"
 m0004="\nValor atual:"
-m0005="Defina o novo endereço IP ou URL para conexão com a Pool"
-m0006="Defina o novo número da porta de conexão com a Pool"
-m0007="Defina o novo protocolo de conexão com a Pool"
-m0008="Defina o novo algoritmo de conexão com a Pool"
-m0009="Defina o endereço da sua Wallet"
-m0010="Defina um nome para o parâmetro WorkerName"
-m0011="Informe o seu endereço de E-mail"
-m0012="Defina um proxy para conexão com a Internet"
+#
+m0005="Endereço IP ou URL para conexão com a Pool"
+m0006="Número da Porta de conexão com a Pool"
+m0007="Protocolo de conexão com a Pool"
+m0008="Algoritmo de conexão com a Pool"
+m0009="Endereço da sua Wallet"
+m0010="WorkerName"
+m0011="Endereço de E-mail para autenticação"
+m0012="Proxy para acesso à Internet"
+#
 m0013="\n        Editar os parâmetros de conexão ao Proxy"
 m0014="Voltar"
 m0015="Selecionar"
@@ -171,28 +173,28 @@ edit_proxy() {
 
 go_proxy() {
         menu_proxy=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "$m0014" --ok-button "$m0015" --menu "$m0013" 17 60 8 \
-                "Pool-Algoritmo" "     $algorithm" \
-                "Pool-Protocolo" "     $protocol" \
-                "Pool-Endereço-IP" "     $ip" \
-                "Pool-Porta" "     $port" \
-                "Pool-Wallet-Address" "     "$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )"..." \
-                "Pool-Worker-Name" "     $WorkerName" \
-                "Pool-Email" "     $Email" \
-                "Internet-Proxy" "     $proxy" \
+                --title "$iTitle" --cancel-button "$m0014" --ok-button "$m0015" --menu "$m0013" 17 80 8 \
+                "$m0008" "     $algorithm" \
+                "$m0007" "     $protocol" \
+                "$m0005" "     $ip" \
+                "$m0006" "     $port" \
+                "$m0009" "     "$(echo $WalletAddress | awk '{print substr ($0, 0, 15)}' )"..." \
+                "$m0010" "     $WorkerName" \
+                "$m0011" "     $Email" \
+                "$m0012" "     $proxy" \
                 3>&1 1>&2 2>&3)
 
         exitstatus=$?
         if [ $exitstatus = 0 ]; then
                 case $menu_proxy in
-                        Pool-Algoritmo) edit_algorithm;;
-                        Pool-Protocolo) edit_protocol;;
-                        Pool-Endereço-IP) edit_ipAddress;;
-                        Pool-Porta) edit_port;;
-                        Pool-Wallet-Address) edit_WalletAddress;;
-                        Pool-Worker-Name) edit_WorkerName;;
-                        Pool-Email) edit_Email;;
-                        Internet-Proxy) edit_proxy;;
+                        "$m0008") edit_algorithm;;
+                        "$m0007") edit_protocol;;
+                        "$m0005") edit_ipAddress;;
+                        "$m0006") edit_port;;
+                        "$m0009") edit_WalletAddress;;
+                        "$m0010") edit_WorkerName;;
+                        "$m0011") edit_Email;;
+                        "$m0012") edit_proxy;;
                 esac
         else
                 go_main
@@ -378,4 +380,3 @@ then
 else
         clear
 fi
-
