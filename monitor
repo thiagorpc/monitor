@@ -304,8 +304,6 @@ do_schedule()
 	systemctl daemon-reload
 
 	go_DeleteOldFile
-
-	echo "${cCyan}+---------------------------------------------------------------+${cNC}"
 	
 	if [ "$EnableStartStop" = "OFF" ]
 	then
