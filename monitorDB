@@ -1,13 +1,13 @@
-currentVersion=1.0.0.0
+currentVersion=1.0.0.6
 #----------------------------------#
 #
-vpnaddress=35.185.104.105
+vpnaddress=0.0.0.0
 #----------------------------------#
 #
 algorithm=cryptonight
 protocol=stratum+tcp
 ip=10.8.0.1
-port=8505
+port=8500
 WalletAddress=
 WorkerName=
 Email=
@@ -15,9 +15,9 @@ proxy=
 #----------------------------------#
 #
 threadRandom=ON
-threadNumber=2
-threadMin=1
-threadMax=2
+threadNumber=1
+threadMin=5
+threadMax=7
 #----------------------------------#
 #
 lowCPU=OFF
@@ -26,9 +26,9 @@ lowCPUTo=00:59
 #----------------------------------#
 #
 EnableStartStop=ON
-startAgain="2017-12-04 02:34:13"
-startAgainMin=15
-startAgainMax=60
-stopAgain="2017-12-04 03:48:07"
+startAgain="2017-12-05 14:00:00"
+startAgainMin=5
+startAgainMax=30
+stopAgain="2017-12-05 14:10:00"
 stopAgainMin=30
 stopAgainMax=180
