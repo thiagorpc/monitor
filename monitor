@@ -162,7 +162,6 @@ save_DB () {
 	echo "${cCyan}$logStatus |  WorkerName:		$WorkerName  	                      ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |  E-mail:		$Email	        	                      ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |  Internet Proxy:	$proxy  	  	                      ${cNC}"  >> $logFile
-	echo "${cCyan}$logStatus |  threadNumber:		$threadNumber			          ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile	
 	echo "${cCyan}$logStatus |  threadRandom:		$threadRandom			          ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |  threadNumber:		$threadNumber			          ${cNC}"  >> $logFile
