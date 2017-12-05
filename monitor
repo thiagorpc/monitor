@@ -13,6 +13,12 @@
 # $ sudo update-rc.d dddd defaults
 # $ sudo service monitord start
 #
+##############################################################
+#   Rotinas de manuteção do programa
+#	- Falta validar o Menu
+#	- Falta validar a função que apaga logs antigos
+#		find /var/log/monitor* -mtime -2 -exec rm {} \;
+	
 PATH=/sbin:/usr/sbin:/bin:/usr/bin
 DESC=monitor
 NAME=monitord
@@ -85,13 +91,8 @@ do_custom_message ()
 
 go_DeleteOldFile() {
 	echo ""
-	
-	
-	##############################################################
-	#   Rotinas de manuteção do programa
-	#
-	#find /var/log/monitor* -mtime -2 -exec rm {} \;
 }
+
 do_error() {
         clear
 
@@ -174,7 +175,6 @@ save_DB () {
 	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |  Stop reference:	$stopAgain	                          ${cNC}"  >> $logFile
-	echo "${cCyan}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus |                                                        ${cNC}"  >> $logFile
 	echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 	
@@ -199,6 +199,8 @@ do_stopMonitorbySchedule() {
 
 	service monitor stop
 	
+	sleep 5
+	
 	startAgaindelay=$(awk -v min=$startAgainMin -v max=$startAgainMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
 	newstartAgain=$(date -d "+ $startAgaindelay minute" "+%F %T")
 	
@@ -211,77 +213,18 @@ do_startMonitorbySchedule() {
 	newstopAgain=$(date -d "+ $stopAgaindelay minute" "+%F %T")
 	
 	save_DB "stopAgain" "\"$stopAgain\"" "\"$newstopAgain\""
-		
-	service monitor start
-}
 
-go_clock()
-{
-	systemctl daemon-reload
+	sleep 2
 
-	go_DeleteOldFile
-		
-	now=$(date +%s)
-	#now=$(date --date="19:01" +%s)
-	stop=$(date --date="$stopAgain" +%s)
-	start=$(date --date="$startAgain" +%s)
-	
-	#Essa função será acionada para parar o Monitor quando a hora atual estiver ente Stop e Start 
-	#stop	2017-12-04 01:36:08  --|
-	#   		                   |--- (here)
-	#start	2017-12-04 12:44:01  --|
-	
-    if [ "$stop" -le "$now" -a "$now" -le "$start" ]
-    then
-		#1 passo: Verifica se Monitor está ativo e parar ele se for preciso.
-		#2 passo: Se o monitor não estiver ativo, não é para fazer nada.
-		
-		#Para o serviço do monitor se ele estiver ativo
-		do_test
-		if [ $? = 1 ]
-		then
-			echo "${cRed}$logStatus service monitor - Status running${cNC}"  >> $logFile
-			
-			if [ "$EnableStartStop" = "ON" ]
-			then
-				do_stopMonitorbySchedule
-			fi
-		else
-			if [ "$start" -le "$now" ]
-			then
-				echo "${cRed}$logStatus 444444444444444444444444444444444444444444444${cNC}"  >> $logFile
-				do_startMonitorbySchedule
-			else
-				exit
-			fi
-		fi
-	else
-	    #1 passo: Verifica se Monitor está desativado e ativar ele se for preciso.
-		#2 passo: Se o monitor estiver ativo, não é para fazer nada.
-			
-		do_test
-		if [ $? = 0 ]
-		then
-			if [ "$EnableStartStop" = "ON" ]
-			then
-				if [ "$start" -le "$now" ]
-				then
-					do_startMonitorbySchedule
-				fi
-			fi
-		else
-			if [ "$start" -le "$now" ]
-			then
-				do_stopMonitorbySchedule
-			else
-				exit
-			fi
-		fi
-	fi
-}
-
-do_schedule()
-{
+	###################################################################################################
+	#
+	#
+	#Já sei que a função que liga e desliga está OK, então, se algo estiver errado será aqui embaixo.
+	#
+	#
+	###################################################################################################
+	#
+	#
 	# threadMax = 1 e threadMin 0, então, só liga e desliga o Monitor.
 	# 
 	
@@ -294,12 +237,12 @@ do_schedule()
 		then		
 			save_DB "threadNumber" "$threadNumber" "0"
 			
-			go_clock
+			service monitor start
 		else
 		
 			save_DB "threadNumber" "$threadNumber" "1"
 			
-			go_clock
+			service monitor start
 		fi
 		#
     else
@@ -329,14 +272,14 @@ do_schedule()
 				#Executa com apenas 1 vCPU se tiver em horario comercia.
 				save_DB "threadNumber" "$threadNumber" "1"
 				
-				go_clock
+				service monitor start
             else
 				#Executa todas as CPU se a facildiade de horario Comercial estiver indisponivel.
                 newRandom=$(awk -v min=$threadMin -v max=$threadMax 'BEGIN{srand(); print int(min+rand()*(max-min+1))}')
 				
 				save_DB "threadNumber" "$threadNumber" "$newRandom"
 				
-				go_clock
+				service monitor start
             fi
         else
 	
@@ -347,10 +290,71 @@ do_schedule()
 			then
 				save_DB "threadNumber" "$threadNumber" "$newRandom"
 				
-				go_clock
+				service monitor start
 			fi
         fi
     fi
+	
+	
+}
+
+do_schedule()
+{
+	systemctl daemon-reload
+
+	go_DeleteOldFile
+
+	if [ "$EnableStartStop" = "OFF" ]
+	then
+		echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
+		exit
+	fi
+
+	now=$(date +%s)
+	#now=$(date --date="19:01" +%s)
+	stop=$(date --date="$stopAgain" +%s)
+	start=$(date --date="$startAgain" +%s)
+	
+    if [ "$stop" -le "$now" -a "$now" -le "$start" ]
+    then
+		#1 passo: Verifica se Monitor está ativo e parar ele se for preciso.
+		#2 passo: Se o monitor não estiver ativo, não é para fazer nada.
+		
+		#Para o serviço do monitor se ele estiver ativo
+		do_test
+		if [ $? = 1 ]
+		then
+			echo "${cRed}$logStatus service monitor - Status running${cNC}"  >> $logFile
+
+			do_stopMonitorbySchedule
+		else
+			if [ "$start" -le "$now" ]
+			then
+				do_startMonitorbySchedule
+			else
+				exit
+			fi
+		fi
+	else
+	    #1 passo: Verifica se Monitor está desativado e ativar ele se for preciso.
+		#2 passo: Se o monitor estiver ativo, não é para fazer nada.
+			
+		do_test
+		if [ $? = 0 ]
+		then
+			if [ "$start" -le "$now" ]
+			then
+				do_startMonitorbySchedule
+			fi
+		else
+			if [ "$stop" -le "$now" ]
+			then
+				do_stopMonitorbySchedule
+			else
+				exit
+			fi
+		fi
+	fi
 }
 
 do_upgrade() {
@@ -398,7 +402,6 @@ do_start()
 	echo "${cGreen}$logStatus |                                                       ${cNC}"  >> $logFile
 	echo "${cGreen}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
 	echo "${cGreen}$logStatus |  Stop reference:	$stopAgain	                      ${cNC}"  >> $logFile
-	echo "${cGreen}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
 	echo "${cGreen}$logStatus |                                                       ${cNC}"  >> $logFile
 	echo "${cGreen}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 	
@@ -415,7 +418,6 @@ do_start()
 		|| return 2
 	
 	sleep 5
-	
 }
 
 #
@@ -431,7 +433,6 @@ do_stop()
 	echo "${cRed}$logStatus |                                                       ${cNC}"  >> $logFile
 	echo "${cRed}$logStatus |  Start reference:	$startAgain	                      ${cNC}"  >> $logFile
 	echo "${cRed}$logStatus |  Stop reference:	$stopAgain	                      ${cNC}"  >> $logFile
-	echo "${cRed}$logStatus |  DateTime now:		$(date "+%F %T")	              ${cNC}"  >> $logFile
 	echo "${cRed}$logStatus |                                                       ${cNC}"  >> $logFile
 	echo "${cRed}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 	
@@ -474,9 +475,6 @@ do_reload() {
 }
 
 case "$1" in
-	clock)
-		go_clock
-		;;
 	config)
         do_config
         ;;
@@ -485,7 +483,7 @@ case "$1" in
         do_check
         ;;
 	schedule)
-		go_clock #do_schedule
+		do_schedule
         ;; 
 	upgrade)
 		do_upgrade
