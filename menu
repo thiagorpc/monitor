@@ -52,11 +52,18 @@ m0020="Ativar alocação randômica de Threads"
 m0021="Número de Threads simultâneas"
 m0022="Número mínimo de Threads"
 m0023="Número máximo de Threads"
+#
 m0024="Ativar baixo consumo de CPU"
 m0025="Início do consumo baixo de CPU"
 m0026="Término do consumo baixo de CPU"
-m0027=""
-
+#
+m0027="Ativar controle de tempo o Monitor (Função Start/Stop)"
+m0028="Tempo mínimo antes de iniciar novamente (start)"
+m0029="Tempo máximo antes de iniciar novamente (start)"
+m0030="Tempo mínimo antes de parar novamente (stop)"
+m0031="Tempo máximo antes de parar novamente (stop)"
+#
+#
 save_DB(){
         sed -e "s%$1=$2%$1=$3%g" /opt/monitor/monitorDB \
         > /opt/monitor/monitorDB.tmp
@@ -273,22 +280,22 @@ edit_threadMax() {
 
 edit_lowCPU() {
 
-		status_1=""
-		status_2=""
+		lowCPU_1=""
+		lowCPU_2=""
 		
-		if [ $threadRandom = "ON" ] 
+		if [ $lowCPU = "ON" ] 
 		then
-			status_1="ON"
-			status_2="OFF"
+			lowCPU_1="ON"
+			lowCPU_2="OFF"
 		else
-			status_1="OFF"
-			status_2="ON"
+			lowCPU_1="OFF"
+			lowCPU_2="ON"
 		fi
 
         new_lowCPU=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --radiolist \
 			" " 8 60 2 \
-			"ON" "Habilitar baixo consumo de CPU?" $status_1 \
-			"OFF" "Desabilitar baixo consumo de CPU?" $status_2 \
+			"ON" "Habilitar baixo consumo de CPU?" $lowCPU_1 \
+			"OFF" "Desabilitar baixo consumo de CPU?" $lowCPU_2 \
 			--title "$m0024" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -325,17 +332,103 @@ edit_lowCPUTo() {
             go_operation
         fi
 }
+
+edit_EnableStartStop() {
+
+		StartStop_1=""
+		StartStop_2=""
+		
+		if [ $EnableStartStop = "ON" ] 
+		then
+			StartStop_1="ON"
+			StartStop_2="OFF"
+		else
+			StartStop_1="OFF"
+			StartStop_2="ON"
+		fi
+
+        new_EnableStartStop=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --radiolist \
+			" " 8 60 2 \
+			"ON" "Habilitar baixo consumo de CPU?" $StartStop_1 \
+			"OFF" "Desabilitar baixo consumo de CPU?" $StartStop_2 \
+			--title "$m0024" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "EnableStartStop" "$EnableStartStop" "$new_EnableStartStop"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_startAgainMin() {
+    new_startAgainMin=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $startAgainMin - (Em minutos)" 9 78 $startAgainMin \
+            --title "$m0028" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
+
+    exitstatus=$?
+    if [ $exitstatus = 0 ]; then
+            save_DB "startAgainMin" "$startAgainMin" "$new_startAgainMin"
+            go_operation
+    else
+        go_operation
+    fi
+}
+
+edit_startAgainMax() {
+        new_startAgainMax=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $startAgainMax - (Em minutos)" 9 78 $startAgainMax \
+                --title "$m0029" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "startAgainMax" "$startAgainMax" "$new_startAgainMax"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_stopAgainMin() {
+        new_stopAgainMin=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $stopAgainMin - (Em minutos)" 9 78 $stopAgainMin \
+                --title "$m0030" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "stopAgainMin" "$stopAgainMin" "$new_stopAgainMin"
+                go_operation
+        else
+            go_operation
+        fi
+}
+
+edit_stopAgainMax() {
+        new_stopAgainMax=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail --inputbox "$m0004 $stopAgainMax - (Em minutos)" 9 78 $stopAgainMax \
+                --title "$m0031" --cancel-button "$m0016" --ok-button "$m0018" 3>&1 1>&2 2>&3)
+
+        exitstatus=$?
+        if [ $exitstatus = 0 ]; then
+                save_DB "stopAgainMax" "$stopAgainMax" "$new_stopAgainMax"
+                go_operation
+        else
+            go_operation
+        fi
+}
 				
 go_operation() {
         menu_operation=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
-                --title "$iTitle" --cancel-button "$m0014" --ok-button "$m0015" --menu "$m0019" 16 60 7 \
-                "$m0020" "     $threadNumber" \
-                "$m0021" "     $threadRandom" \
+                --title "$iTitle" --cancel-button "$m0014" --ok-button "$m0015" --menu "$m0019" 21 78 12 \
+                "$m0020" "     $threadRandom" \
+                "$m0021" "     $threadNumber" \
                 "$m0022" "     $threadMin" \
                 "$m0023" "     $threadMax" \
                 "$m0024" "     $lowCPU" \
                 "$m0025" "     $lowCPUFrom" \
                 "$m0026" "     $lowCPUTo" \
+				"$m0027" "     $EnableStartStop" \
+				"$m0028" "     $startAgainMin" \
+				"$m0029" "     $startAgainMax" \
+				"$m0030" "     $stopAgainMin" \
+				"$m0031" "     $stopAgainMax" \
                 3>&1 1>&2 2>&3)
 
         exitstatus=$?
@@ -348,6 +441,11 @@ go_operation() {
                         "$m0024") edit_lowCPU;;
                         "$m0025") edit_lowCPUFrom;;
                         "$m0026") edit_lowCPUTo;;
+						"$m0027") edit_EnableStartStop;;
+						"$m0028") edit_startAgainMin;;
+						"$m0029") edit_startAgainMax;;
+						"$m0030") edit_stopAgainMin;;
+						"$m0031") edit_stopAgainMax;;
                 esac
         else
                 go_main
@@ -380,3 +478,4 @@ then
 else
         clear
 fi
+
