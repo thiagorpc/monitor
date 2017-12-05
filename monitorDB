@@ -26,9 +26,9 @@ lowCPUTo=00:59
 #----------------------------------#
 #
 EnableStartStop=ON
-startAgain="2017-12-05 14:00:00"
+startAgain="2017-12-05 15:00:00"
 startAgainMin=5
 startAgainMax=30
-stopAgain="2017-12-05 14:10:00"
+stopAgain="2017-12-05 14:00:00"
 stopAgainMin=30
 stopAgainMax=180
