@@ -40,6 +40,7 @@ logStatus="["$(date "+%Y-%m-%d %H:%M:%S")"]"
 ##Cyan         0;36     Light Cyan    1;36
 ##Light Gray   0;37     White         1;37
 
+cWhite='\033[1;37m'
 cCyan='\033[0;36m'
 cGreen='\033[0;32m'
 cRed='\033[0;31m'
@@ -196,7 +197,7 @@ do_hash()
 }
 
 do_stopMonitorbySchedule() {
-
+	
 	service monitor stop
 	
 	sleep 5
@@ -304,9 +305,10 @@ do_schedule()
 
 	go_DeleteOldFile
 
+	echo "${cCyan}+---------------------------------------------------------------+${cNC}"
+	
 	if [ "$EnableStartStop" = "OFF" ]
 	then
-		echo "${cCyan}$logStatus +-------------------------------------------------------+${cNC}"  >> $logFile
 		exit
 	fi
 
@@ -324,8 +326,6 @@ do_schedule()
 		do_test
 		if [ $? = 1 ]
 		then
-			echo "${cRed}$logStatus service monitor - Status running${cNC}"  >> $logFile
-
 			do_stopMonitorbySchedule
 		else
 			if [ "$start" -le "$now" ]
@@ -409,7 +409,7 @@ do_start()
 	#   0 if daemon has been started
 	#   1 if daemon was already running
 	#   2 if daemon could not be started
-	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test > call_log \
+	start-stop-daemon --chuid $USER --start --quiet --pidfile $PIDFILE --exec $DAEMON --test \
 		|| return 1
 		
 		start-stop-daemon --background --chuid $USER --start --quiet --nicelevel 10 \
@@ -472,6 +472,37 @@ do_reload() {
 	
 	start-stop-daemon --stop --signal 1 --quiet --pidfile $PIDFILE --name $NAME
 	return 0
+}
+
+do_help() {
+
+		clear
+		
+		echo "${cCyan}+---------------------------------------------------------------+${cNC}"
+		echo "${cCyan}|${cWhite}                       Monitor CPU Miner                       ${cCyan}|${cNC}"
+		echo "${cCyan}+---------------------------------------------------------------+${cNC}"
+		echo "${cCyan}|${cWhite}                                              		                     ${cNC}"
+		echo "${cCyan}|${cWhite}  Veja abaixo as ${cGreen}funções${cWhite} disponíveis                   ${cNC}"           		
+		echo "${cCyan}|${cWhite}                                               		  	                 ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}start	${cWhite}Inicia o serviço                            ${cNC}"           
+		echo "${cCyan}|${cWhite}  ${cGreen}stop		${cWhite}Para o serviço 	                         ${cNC}"           
+		echo "${cCyan}|${cWhite}  ${cGreen}status	${cWhite}Verifica o status do seriço                 ${cNC}"           
+		echo "${cCyan}|${cWhite}  ${cGreen}restart	${cWhite}Reinicia o serviço                          ${cNC}"           
+		echo "${cCyan}|${cWhite}  ${cGreen}hash		${cWhite}Permite visualizar o valor de HASH/s        ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}enable	${cWhite}Habilita iniciar com o Sistema Operacional  ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}disable	${cWhite}Desabilita iniciar com o Sistema Operaciona ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}config	${cWhite}Entra no módulo de configuração 	         ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}check	${cWhite}Verifica se a configuração está correta     ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}upgrade	${cWhite}Verifica se há uma nova versão disponível   ${cNC}"
+		echo "${cCyan}|${cWhite}                                               			                 ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cCyan}Digite o comando abaixo para utilizar o Monitor:     		     ${cNC}"
+		echo "${cCyan}|${cWhite}  service monitor ${cGreen}\"função\"                            		 ${cNC}"
+		echo "${cCyan}|${cWhite}                                               			                 ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cCyan}Exemplo:                                                       ${cNC}"
+		echo "${cCyan}|${cWhite}  service monitor ${cGreen}config                            			 ${cNC}"
+		echo "${cCyan}|${cWhite}                                               			                 ${cNC}"
+		echo "${cCyan}+---------------------------------------------------------------+${cNC}"
+		echo "\n"
 }
 
 case "$1" in
@@ -537,7 +568,9 @@ case "$1" in
 		esac
 		;;
 	*)
-		echo "Usage: $SCRIPTNAME {start|stop|status|restart|hash|enable|disable}" >&2
+		do_help
+
+		#echo "Usage: $SCRIPTNAME {start|stop|status|restart|hash|enable|disable}" >&2
 		exit 3
 		;;
 esac
