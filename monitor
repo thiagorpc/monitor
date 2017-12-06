@@ -46,7 +46,7 @@ cGreen='\033[0;32m'
 cRed='\033[0;31m'
 cLightPurple='\033[0;35m'
 cNC='\033[0m' # No Color
-
+#
 . /opt/monitor/monitorDB
 #
 x_proxy=""
@@ -504,6 +504,7 @@ do_help() {
 		echo "${cCyan}|${cWhite}  ${cGreen}config	${cWhite}Entra no módulo de configuração 	         ${cNC}"
 		echo "${cCyan}|${cWhite}  ${cGreen}check	${cWhite}Verifica se a configuração está correta     ${cNC}"
 		echo "${cCyan}|${cWhite}  ${cGreen}upgrade	${cWhite}Verifica se há uma nova versão disponível   ${cNC}"
+		echo "${cCyan}|${cWhite}  ${cGreen}version	${cWhite}Informa a versão atual                      ${cNC}"
 		echo "${cCyan}|${cWhite}                                               			                 ${cNC}"
 		echo "${cCyan}|${cWhite}  ${cCyan}Digite o comando abaixo para utilizar o Monitor:     		     ${cNC}"
 		echo "${cCyan}|${cWhite}  service monitor ${cGreen}\"função\"                            		 ${cNC}"
@@ -513,6 +514,15 @@ do_help() {
 		echo "${cCyan}|${cWhite}                                               			                 ${cNC}"
 		echo "${cCyan}+---------------------------------------------------------------+${cNC}"
 		echo "\n"
+}
+#
+do_version(){
+	
+	. /opt/monitor/version
+	
+	whiptail --title "Seja bem vindo ao Monitor" --msgbox "    A versão atual é: $version" 10 40
+	
+	clear
 }
 
 case "$1" in
@@ -535,6 +545,9 @@ case "$1" in
 	disable)
         do_disable
         ;;
+	version)
+		do_version
+		;;
 	hash)
         do_hash
         ;;
