@@ -55,19 +55,32 @@ then
         x_proxy="-x $proxy"
 fi
 #
-u_user=""
-if [ "$user" != "" ]
+u_WalletAddress=""
+if [ "$WalletAddress" != "" ]
 then
-        u_user="-u $user"
+        u_WalletAddress="-u $WalletAddress"
 fi
 #
-p_password=""
-if [ "$password" != "" ]
+p_WorkerName=""
+if [ "$WorkerName" != "" ] 
 then
-        p_password="-p $password"
+	if [ "$Email" != "" ]
+	then
+		p_WorkerName="-p $WorkerName:$Email"
+	fi
+	
+	if [ "$Email" = "" ] 
+	then
+		p_WorkerName="-p $WorkerName"
+	fi
+else
+	if [ "$Email" != "" ]
+	then
+		p_WorkerName="-p $Email"
+	fi
 fi
 #
-DAEMON_OPTS=" -a $algorithm -o $protocol://$ip:$port -t $threadNumber $u_user $p_password $x_proxy "
+DAEMON_OPTS=" -a $algorithm -o $protocol://$ip:$port -t $threadNumber $u_WalletAddress $p_WorkerName $x_proxy "
 #
 # Exit if the package is not installed
 [ -x $DAEMON ] || exit 0
@@ -132,6 +145,7 @@ do_disable() {
 
 do_config() {
 	/opt/monitor/menu
+	clear
 }
 
 do_test() {
