@@ -41,7 +41,7 @@ m0010="WorkerName"
 m0011="Endereço de E-mail para autenticação"
 m0012="Proxy para acesso à Internet"
 #
-m0013="\n        Editar os parâmetros de conexão ao Proxy"
+m0013="\n     Editar os parâmetros de conexão com a Pool"
 m0014="Voltar"
 m0015="Selecionar"
 m0016="Cancelar"
@@ -455,7 +455,7 @@ go_operation() {
 go_main() {
         main=$(NEWT_COLORS="${newtcols[@]} ${newtcols_error[@]}" whiptail \
                 --title "$iTitle" --cancel-button "$m0017" --ok-button "$m0015" --menu "\n       Selecione abaixo a opção desejada" 11 60 2 \
-                "1" "Editar o módulo de conexão com Proxy XMR?"  \
+                "1" "Editar os parâmetros de conexão com a Pool?"  \
                 "2" "Editar os parâmetros de operação?" \
                 3>&1 1>&2 2>&3)
 
@@ -478,4 +478,3 @@ then
 else
         clear
 fi
-
