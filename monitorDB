@@ -16,8 +16,8 @@ proxy=
 #
 threadRandom=ON
 threadNumber=1
-threadMin=5
-threadMax=7
+threadMin=4
+threadMax=5
 #----------------------------------#
 #
 lowCPU=OFF
