@@ -27,7 +27,6 @@ DAEMON_OPTS=""
 PIDFILE=/var/run/$NAME.pid
 SCRIPTNAME=/etc/init.d/$DESC
 USER=root
-logDate=$(date "+%Y-%m-%d")
 logFile=/var/log/monitor_$logDate.log
 logStatus="["$(date "+%Y-%m-%d %H:%M:%S")"]"
 #
@@ -197,14 +196,12 @@ do_hash()
 {
 	systemctl daemon-reload
 	
-	file=/var/log/monitor_$logDate.log
-	
-	if [ -f $f ]
+	if [ -f $logFile ]
 	then
-		tail -F $file
+		tail -F $logFile
 	else
-		touch $file
-		tail -F tail -F $file
+		touch $logFile
+		tail -F tail -F $logFile
 	fi
 }
 
