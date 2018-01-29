@@ -114,7 +114,7 @@ sleep 2
 echo "$ve_f MINERAÃ‡AO INICIADA UTILIZE (screen -x yescrypt)$cor_off"
 ;;
 *-crypt)
-echo "$az_f VOCE SELECIONOU$vr cryptonight$rx OpenMiner.NET $cor_off"
+echo "$az_f VOCE SELECIONOU$vr cryptonight$rx CiaPool.com $cor_off"
 #ERROr
 if [ "$2" = ""  ]
 then
@@ -157,9 +157,9 @@ sleep 3
 sudo mv minerd /usr/local/bin/
 if [ "$3" = ""  ]
 then
-screen -dmS crypt minerd -a cryptonight -o stratum+tcp://nbr.openminer.net:47901 -u $wallet -p x
+screen -dmS crypt minerd -a cryptonight -o stratum+tcp://nbr.ciapool.com:5555 -u $wallet -p x
 else
-screen -dmS crypt minerd -a cryptonight -o stratum+tcp://nbr.openminer.net:47901 -u $wallet -t $core -p x
+screen -dmS crypt minerd -a cryptonight -o stratum+tcp://nbr.ciapool.com:5555 -u $wallet -t $core -p x
 fi
 clear
 sleep 2
